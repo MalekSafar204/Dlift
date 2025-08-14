@@ -407,10 +407,10 @@ export default function CranesPage() {
       {/* CSS for triangular clipping */}
       <style jsx>{`
         .clip-path-left {
-          clip-path: polygon(0 0, 0% 100%, 50% 100%, 50% 0);
+          clip-path: polygon(0 0, 0% 100%, 60% 100%, 40% 0);
         }
         .clip-path-right {
-          clip-path: polygon(50% 0, 50% 100%, 100% 100%, 100% 0);
+          clip-path: polygon(60% 0, 40% 100%, 100% 100%, 100% 0);
         }
 
         @media (max-width: 768px) {
