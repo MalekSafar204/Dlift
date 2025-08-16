@@ -4,6 +4,7 @@ export interface Crane {
   year: string;
   manufacturer: string;
   image: string;
+  description: string;
 }
 
 export interface CraneCategory {

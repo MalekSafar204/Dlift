@@ -15,6 +15,8 @@ export const craneCategories: CraneCategory[] = [
         year: "1991 & other years",
         manufacturer: "Liebherr",
         image: "/atc/LTM-1120.jpg",
+        description:
+          "A versatile all-terrain crane ideal for heavy lifting in construction and industrial projects, known for its reliability and reach.",
       },
       {
         name: "LTM 1100",
@@ -22,6 +24,8 @@ export const craneCategories: CraneCategory[] = [
         year: "1994",
         manufacturer: "Liebherr",
         image: "/atc/LTM-1100.jpg",
+        description:
+          "Compact and powerful, this crane is suited for urban and confined job sites requiring efficient lifting solutions.",
       },
       {
         name: "LTM 1300",
@@ -29,6 +33,8 @@ export const craneCategories: CraneCategory[] = [
         year: "2002",
         manufacturer: "Liebherr",
         image: "/atc/LTM-1300.jpg",
+        description:
+          "High-capacity crane designed for demanding lifts in infrastructure and energy sectors, offering advanced technology and safety.",
       },
       {
         name: "LTM 1300/1",
@@ -36,6 +42,8 @@ export const craneCategories: CraneCategory[] = [
         year: "2001",
         manufacturer: "Liebherr",
         image: "/atc/LTM-1300-1.jpg",
+        description:
+          "Engineered for versatility and strength, suitable for large-scale construction and industrial lifting tasks.",
       },
       {
         name: "LTM 1500-8.1",
@@ -43,6 +51,8 @@ export const craneCategories: CraneCategory[] = [
         year: "2002",
         manufacturer: "Liebherr",
         image: "/atc/LTM-1500-8.1.jpg",
+        description:
+          "One of the most powerful mobile cranes, perfect for heavy-duty lifting in wind energy, bridge, and plant construction.",
       },
       {
         name: "AC 200-1",
@@ -50,6 +60,8 @@ export const craneCategories: CraneCategory[] = [
         year: "2005",
         manufacturer: "Demag",
         image: "/atc/AC-200-1.jpg",
+        description:
+          "Efficient and robust, this Demag crane is ideal for large construction projects and industrial applications.",
       },
       {
         name: "AC 100",
@@ -57,6 +69,8 @@ export const craneCategories: CraneCategory[] = [
         year: "2007",
         manufacturer: "Demag",
         image: "/atc/AC-100.jpg",
+        description:
+          "A reliable all-terrain crane, well-suited for medium to heavy lifting in a variety of environments.",
       },
     ],
   },
@@ -74,6 +88,8 @@ export const craneCategories: CraneCategory[] = [
         year: "multiple years",
         manufacturer: "XCMG",
         image: "/tc/QY25K.webp",
+        description:
+          "A reliable truck crane for light to medium lifting, ideal for quick deployment and urban construction sites.",
       },
       {
         name: "QY50B",
@@ -81,6 +97,8 @@ export const craneCategories: CraneCategory[] = [
         year: "multiple years",
         manufacturer: "XCMG",
         image: "/tc/QY50B.jpg",
+        description:
+          "Versatile and efficient, this model is suited for a range of lifting tasks in construction and logistics.",
       },
       {
         name: "QY65K",
@@ -88,6 +106,8 @@ export const craneCategories: CraneCategory[] = [
         year: "multiple years",
         manufacturer: "XCMG",
         image: "/tc/QY65K.jpg",
+        description:
+          "Designed for higher capacity lifts, this crane is perfect for infrastructure and industrial projects.",
       },
       {
         name: "QY70K",
@@ -95,6 +115,8 @@ export const craneCategories: CraneCategory[] = [
         year: "multiple years",
         manufacturer: "XCMG",
         image: "/tc/QY70K.jpg",
+        description:
+          "A robust truck crane for heavy lifting, suitable for demanding construction and industrial environments.",
       },
       {
         name: "180 E 28",
@@ -102,6 +124,8 @@ export const craneCategories: CraneCategory[] = [
         year: "N/A",
         manufacturer: "Iveco",
         image: "/tc/180-E-28.jpg",
+        description:
+          "A flexible truck-mounted crane, ideal for transport and lifting tasks in various site conditions.",
       },
     ],
   },
@@ -119,6 +143,8 @@ export const craneCategories: CraneCategory[] = [
         year: "2007",
         manufacturer: "Terex",
         image: "/rtc/RT-555.jpg",
+        description:
+          "Rough terrain crane designed for off-road performance and reliable lifting in challenging environments.",
       },
       {
         name: "RT 555-1",
@@ -126,6 +152,8 @@ export const craneCategories: CraneCategory[] = [
         year: "2007",
         manufacturer: "Terex",
         image: "/rtc/RT-555-1.jpg",
+        description:
+          "Enhanced capacity and reach, this model is perfect for heavy-duty lifting on rough terrain.",
       },
     ],
   },
@@ -143,6 +171,8 @@ export const craneCategories: CraneCategory[] = [
         year: "2008",
         manufacturer: "Sany",
         image: "/crawler/SCC1000.jpg",
+        description:
+          "Crawler crane with high lifting capacity, ideal for large-scale construction and infrastructure projects.",
       },
       {
         name: "SCC500D",
@@ -150,6 +180,8 @@ export const craneCategories: CraneCategory[] = [
         year: "2007",
         manufacturer: "Sany",
         image: "/crawler/SCC500D.jpg",
+        description:
+          "Efficient crawler crane for medium lifting tasks, suitable for construction and industrial use.",
       },
       {
         name: "SCC3200",
@@ -157,6 +189,8 @@ export const craneCategories: CraneCategory[] = [
         year: "2008",
         manufacturer: "Sany",
         image: "/crawler/SCC3200.webp",
+        description:
+          "Heavy-duty crawler crane for the most demanding lifting operations in energy and infrastructure sectors.",
       },
       {
         name: "QUY70",
@@ -164,6 +198,8 @@ export const craneCategories: CraneCategory[] = [
         year: "2007, 2003",
         manufacturer: "Zoomlion",
         image: "/crawler/QUY70.webp",
+        description:
+          "Reliable crawler crane for medium to heavy lifting, suitable for construction and industrial projects.",
       },
       {
         name: "SCX2500",
@@ -171,6 +207,8 @@ export const craneCategories: CraneCategory[] = [
         year: "2005",
         manufacturer: "Hitachi Sumitomo",
         image: "/crawler/SCX2500.jpg",
+        description:
+          "High-capacity crawler crane, perfect for infrastructure, energy, and large-scale construction projects.",
       },
       {
         name: "LR 1280",
@@ -178,6 +216,8 @@ export const craneCategories: CraneCategory[] = [
         year: "1993",
         manufacturer: "Liebherr",
         image: "/crawler/LR-1280.jpeg",
+        description:
+          "Versatile crawler crane for heavy lifting, known for its stability and performance on challenging terrain.",
       },
       {
         name: "HS843HD",
@@ -185,6 +225,8 @@ export const craneCategories: CraneCategory[] = [
         year: "2003",
         manufacturer: "Liebherr",
         image: "/crawler/HS843HD.jpg",
+        description:
+          "Heavy-duty crawler crane, ideal for foundation work and large construction projects.",
       },
       {
         name: "6100",
@@ -192,6 +234,8 @@ export const craneCategories: CraneCategory[] = [
         year: "1999",
         manufacturer: "Sennebogen",
         image: "/crawler/6100.jpg",
+        description:
+          "Reliable crawler crane for a variety of lifting tasks in construction and industry.",
       },
       {
         name: "CH135",
@@ -199,6 +243,8 @@ export const craneCategories: CraneCategory[] = [
         year: "N/A",
         manufacturer: "Ruston Bucyrus",
         image: "/crawler/CH135.jpg",
+        description:
+          "Specialized crawler crane for heavy lifting, suitable for unique and challenging project requirements.",
       },
       {
         name: "CCH",
@@ -206,6 +252,8 @@ export const craneCategories: CraneCategory[] = [
         year: "1991",
         manufacturer: "IHI",
         image: "/crawler/CCH.jpg",
+        description:
+          "Efficient crawler crane for medium to heavy lifting, ideal for construction and industrial use.",
       },
       {
         name: "LS 248 H",
@@ -213,6 +261,8 @@ export const craneCategories: CraneCategory[] = [
         year: "1987",
         manufacturer: "Link-Belt",
         image: "/crawler/LS-248-H.jpg",
+        description:
+          "Classic crawler crane, known for its durability and reliability in various lifting operations.",
       },
       {
         name: "MC136",
@@ -220,6 +270,8 @@ export const craneCategories: CraneCategory[] = [
         year: "1990",
         manufacturer: "Hyco",
         image: "/crawler/MC136.jpg",
+        description:
+          "Compact crawler crane, perfect for smaller sites and lighter lifting requirements.",
       },
     ],
   },
@@ -237,6 +289,8 @@ export const craneCategories: CraneCategory[] = [
         year: "1998",
         manufacturer: "Grove",
         image: "/special/GMK-5130.jpg",
+        description:
+          "Mobile harbour crane designed for heavy lifting in ports and special applications.",
       },
       {
         name: "GMK 5100",
@@ -244,6 +298,8 @@ export const craneCategories: CraneCategory[] = [
         year: "2003",
         manufacturer: "Grove",
         image: "/special/GMK-5100.jpg",
+        description:
+          "Versatile mobile crane for a range of lifting tasks in specialized environments.",
       },
       {
         name: "GMK 3050",
@@ -251,6 +307,8 @@ export const craneCategories: CraneCategory[] = [
         year: "1999, 2000",
         manufacturer: "Grove",
         image: "/special/GMK-3050.jpg",
+        description:
+          "Compact mobile crane, ideal for lighter lifting and maneuverability in tight spaces.",
       },
     ],
   },
@@ -268,6 +326,8 @@ export const craneCategories: CraneCategory[] = [
         year: "Multiple years",
         manufacturer: "Scheuerle, Welte",
         image: "/support/Lowbed-Trailers.jpg",
+        description:
+          "Essential for transporting heavy equipment and cranes to and from job sites, ensuring safe and efficient logistics.",
       },
       {
         name: "DAF 2100",
@@ -275,6 +335,8 @@ export const craneCategories: CraneCategory[] = [
         year: "N/A",
         manufacturer: "DAF",
         image: "/support/DAF-2100.jpg",
+        description:
+          "Reliable manlift for safe access to elevated work areas, supporting a variety of maintenance and installation tasks.",
       },
       {
         name: "Mercedes",
@@ -282,6 +344,8 @@ export const craneCategories: CraneCategory[] = [
         year: "N/A",
         manufacturer: "Mercedes",
         image: "/support/Mercedes.jpeg",
+        description:
+          "Powerful tractor unit for hauling trailers and heavy loads, ensuring efficient site logistics.",
       },
     ],
   },
