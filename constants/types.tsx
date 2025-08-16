@@ -3,6 +3,7 @@ export interface Crane {
   capacity: string;
   year: string;
   manufacturer: string;
+  image: string;
 }
 
 export interface CraneCategory {
