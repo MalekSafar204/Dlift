@@ -41,7 +41,7 @@ export default function DesktopCraneCard({
                 {category.cranes.length} models available
               </span>
               <Link
-                href={"/"}
+                href={`/cranes/types?category=${category.href}`}
                 className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full transition-colors duration-500"
               >
                 View Models
@@ -53,7 +53,7 @@ export default function DesktopCraneCard({
 
       {/* Clickable overlay for only the image area (not the title overlay) */}
       <Link
-        href={"/"}
+        href={`/cranes/types?category=${category.href}`}
         className="absolute inset-0 z-5 cursor-pointer"
         aria-label={`View ${category.title} details`}
         style={{
@@ -65,7 +65,7 @@ export default function DesktopCraneCard({
 
       {/* Clickable overlay for the uncovered area on hover */}
       <Link
-        href={"/"}
+        href={`/cranes/types?category=${category.href}`}
         className="absolute inset-0 z-5 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-600"
         aria-label={`View ${category.title} details`}
         style={{

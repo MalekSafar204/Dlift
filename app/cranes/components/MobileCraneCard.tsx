@@ -8,14 +8,14 @@ interface MobileCraneCardProps {
 export default function MobileCraneCard({ category }: MobileCraneCardProps) {
   return (
     <div className="lg:hidden">
-      <Link href={"/"}>
+      <Link href={`/cranes/types?category=${category.href}`}>
         <div
           className="h-56 bg-cover bg-center"
           style={{ backgroundImage: `url(${category.image})` }}
         />
       </Link>
       <div className="bg-gray-900 text-white p-6">
-        <Link href={"/"}>
+        <Link href={`/cranes/types?category=${category.href}`}>
           <h2 className="text-2xl font-bold mb-2">{category.title}</h2>
         </Link>
         <p className="text-gray-300 mb-4">{category.description}</p>
@@ -24,7 +24,7 @@ export default function MobileCraneCard({ category }: MobileCraneCardProps) {
             {category.cranes.length} models available
           </span>
           <Link
-            href={"/"}
+            href={`/cranes/types?category=${category.href}`}
             className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-full"
           >
             View Models

@@ -8,6 +8,7 @@ export interface Crane {
 export interface CraneCategory {
   id: string;
   title: string;
+  href: string;
   description: string;
   cranes: Crane[];
   image: string;
