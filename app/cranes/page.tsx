@@ -29,15 +29,15 @@ export default function CranesPage() {
 
           return (
             <div key={category.id}>
-              {/* --- Desktop / md+ : diagonal overlay --- */}
-              <div className="group relative hidden md:block h-[500px] overflow-hidden">
+              {/* --- Desktop / lg+ : diagonal overlay --- */}
+              <div className="group relative hidden lg:block h-[500px] overflow-hidden">
                 {/* Full-bleed image (never shrinks, only zooms) */}
                 <div
-                  className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[1200ms] ease-[cubic-bezier(.22,.61,.36,1)] origin-center group-hover:scale-[1.06]"
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-[1200ms] ease-[cubic-bezier(.22,.61,.36,1)] origin-center group-hover:scale-[1.06] group-hover:brightness-110 group-hover:contrast-105"
                   style={{ backgroundImage: `url(${category.image})` }}
                 />
                 {/* Subtle darken/brighten */}
-                <div className="absolute inset-0 bg-black/30 transition duration-500 group-hover:brightness-110 group-hover:contrast-105" />
+                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-all duration-500" />
 
                 {/* Title overlay (this is what “recedes”) */}
                 <div
@@ -47,11 +47,9 @@ export default function CranesPage() {
                 >
                   <div className="h-full bg-gradient-to-br from-gray-900 to-gray-700/95 p-12 flex flex-col justify-center">
                     <div className={`max-w-md ${isLeft ? "" : "ml-auto"}`}>
-                      <Link href={"/"}>
-                        <h2 className="text-4xl font-bold mb-4 text-white/85 hover:text-white">
-                          {category.title}
-                        </h2>
-                      </Link>
+                      <h2 className="text-4xl font-bold mb-4 text-white/85">
+                        {category.title}
+                      </h2>
                       <p className="text-gray-300 text-lg mb-6 leading-relaxed">
                         {category.description}
                       </p>
@@ -94,31 +92,57 @@ export default function CranesPage() {
                     </div>
                   </div>
                 </div>
+
+                {/* Clickable overlay for only the image area (not the title overlay) */}
+                <Link
+                  href={"/"}
+                  className="absolute inset-0 z-5 cursor-pointer"
+                  aria-label={`View ${category.title} details`}
+                  style={{
+                    clipPath: isLeft
+                      ? "polygon(58% 0, 100% 0, 100% 100%, 46% 100%)"
+                      : "polygon(0 0, 54% 0, 42% 100%, 0% 100%)",
+                  }}
+                />
+
+                {/* Clickable overlay for the uncovered area on hover */}
+                <Link
+                  href={"/"}
+                  className="absolute inset-0 z-5 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-600"
+                  aria-label={`View ${category.title} details`}
+                  style={{
+                    clipPath: isLeft
+                      ? "polygon(47% 0, 58% 0, 46% 100%, 35% 100%)"
+                      : "polygon(54% 0, 65% 0, 53% 100%, 42% 100%)",
+                  }}
+                />
               </div>
 
-              {/* --- Mobile / <md : stack image then title --- */}
-              <div className="md:hidden">
-                <div
-                  className="h-56 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${category.image})` }}
-                />
+              {/* --- Mobile & Tablet / <lg : stack image then title --- */}
+              <div className="lg:hidden">
+                <Link href={"/"}>
+                  <div
+                    className="h-56 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${category.image})` }}
+                  />
+                </Link>
                 <div className="bg-gray-900 text-white p-6">
-                  <h2 className="text-2xl font-bold mb-2">{category.title}</h2>
+                  <Link href={"/"}>
+                    <h2 className="text-2xl font-bold mb-2">
+                      {category.title}
+                    </h2>
+                  </Link>
                   <p className="text-gray-300 mb-4">{category.description}</p>
                   <div className="flex items-center justify-between">
                     <span className="text-orange-400 font-semibold">
                       {category.cranes.length} models available
                     </span>
-                    <button
-                      onClick={() =>
-                        setSelectedCategory(
-                          selectedCategory === category.id ? null : category.id
-                        )
-                      }
+                    <Link
+                      href={"/"}
                       className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-full"
                     >
-                      {selectedCategory === category.id ? "Hide" : "Details"}
-                    </button>
+                      View Models
+                    </Link>
                   </div>
                   {selectedCategory === category.id && (
                     <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 mt-4">

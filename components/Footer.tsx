@@ -8,7 +8,7 @@ export const Footer: React.FC = () => (
         <div className="mb-6 md:mb-0">
           <div className="flex items-center">
             <span className="font-bold text-2xl text-orange-500">
-              HeavyLift
+              DLift
             </span>
             <span className="font-light text-xl ml-1">Crane Rentals</span>
           </div>
@@ -38,7 +38,7 @@ export const Footer: React.FC = () => (
         </div>
       </div>
       <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500 text-sm">
-        <p>&copy; 2023 HeavyLift Crane Rentals. All rights reserved.</p>
+        <p>&copy; 2023 DLift Crane Rentals. All rights reserved.</p>
       </div>
     </div>
   </footer>

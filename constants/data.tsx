@@ -6,7 +6,7 @@ export const craneCategories: CraneCategory[] = [
     title: "All-Terrain Cranes (ATC)",
     description:
       "Versatile cranes designed for both on-road and off-road operations with exceptional mobility and lifting capacity. Our fleet includes premium Liebherr and Demag models ranging from 65 to 500 tons.",
-    image: "/towerCrane.jpg",
+    image: "/ATC.jpg",
     cranes: [
       {
         name: "LTM 1120",
@@ -57,7 +57,7 @@ export const craneCategories: CraneCategory[] = [
     title: "Truck Cranes (TC)",
     description:
       "Mobile cranes mounted on truck chassis for quick deployment and transportation between job sites. Featuring reliable XCMG and Iveco models for efficient project execution.",
-    image: "/truckCrane.jpg",
+    image: "/TC.jpg",
     cranes: [
       {
         name: "QY25K",
@@ -96,7 +96,7 @@ export const craneCategories: CraneCategory[] = [
     title: "Rough Terrain Cranes (RTC)",
     description:
       "Specialized cranes built for challenging off-road conditions with enhanced stability and mobility. Our Terex models provide reliable performance in the most demanding environments.",
-    image: "/crawlerCrane.jpg",
+    image: "/RTC.jpg",
     cranes: [
       {
         name: "RT 555",
@@ -117,7 +117,7 @@ export const craneCategories: CraneCategory[] = [
     title: "Crawler Cranes",
     description:
       "Heavy-duty cranes with tracked undercarriages for maximum stability and lifting capacity on challenging terrain. From 50 to 320 tons, our crawler fleet handles the most complex lifting operations.",
-    image: "/hero1.jpg",
+    image: "/CRAWLER.jpg",
     cranes: [
       {
         name: "SCC1000",
@@ -188,7 +188,7 @@ export const craneCategories: CraneCategory[] = [
     title: "Mobile Harbour & Special Equipment",
     description:
       "Specialized equipment including mobile harbour cranes and versatile lifting solutions for unique applications. Our Grove models provide exceptional performance in specialized environments.",
-    image: "/hero2.jpg",
+    image: "/MOBILE.jpg",
     cranes: [
       {
         name: "GMK 5130",
@@ -215,7 +215,7 @@ export const craneCategories: CraneCategory[] = [
     title: "Supporting Equipment",
     description:
       "Essential support equipment including trailers, manlifts, and tractors to complete your project requirements. Complete solutions for comprehensive project support.",
-    image: "/hero3.jpg",
+    image: "/SUPPORT.jpg",
     cranes: [
       {
         name: "Lowbed Trailers",
