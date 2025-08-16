@@ -131,7 +131,7 @@ export default function Navbar() {
           {/* Menu dropdown */}
           <div className="mobile-menu md:hidden absolute top-full left-0 w-full bg-gray-900 shadow-lg z-50">
             <div className="px-4 py-6 space-y-4">
-              {["#home", "#cranes", "#services", "#about", "#contact"].map(
+              {["#home", "/cranes", "#services", "#about", "#contact"].map(
                 (id) => (
                   <Link
                     key={id}

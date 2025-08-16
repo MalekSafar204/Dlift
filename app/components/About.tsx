@@ -3,10 +3,10 @@ import Image from "next/image";
 import React from "react";
 
 export const About: React.FC = () => (
-  <section id="about" className="py-16 px-4 bg-gray-100">
+  <section id="about" className="py-16 px-4 bg-white">
     <div className="container mx-auto">
       <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
-        About HeavyLift
+        About DLift
       </h2>
       <p className="text-center max-w-3xl mx-auto mb-12 text-gray-600">
         Trusted crane rental partner for over 25 years in the industry.
@@ -14,9 +14,9 @@ export const About: React.FC = () => (
       <div className="flex flex-col md:flex-row gap-8 items-center">
         <div className="md:w-1/2">
           <Image
-          width={800}
-          height={500}
-            src="/aboutSite2.jpg"
+          width={600}
+          height={300}
+            src="/logoUpright.jpg"
             alt="Construction site with multiple cranes"
             className="rounded-lg shadow-lg w-full"
           />
