@@ -1,5 +1,6 @@
 import { Crane } from "@/constants/types";
 import Image from "next/image";
+import Link from "next/link";
 
 interface CraneModelsProps {
   cranes: Crane[];
@@ -68,9 +69,9 @@ export default function CraneModels({ cranes }: CraneModelsProps) {
                   <span className="font-semibold">Description: </span>
                   {crane.description}
                 </div>
-                <button className="self-start mt-1 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-md shadow-sm transition-colors duration-200">
+                <Link href={`/quote?model=${crane.id}`} className="self-start mt-1 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-md shadow-sm transition-colors duration-200">
                   Get a Quote
-                </button>
+                </Link>
               </div>
             </div>
           ))}

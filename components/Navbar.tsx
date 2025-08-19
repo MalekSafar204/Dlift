@@ -5,27 +5,25 @@ import Logo from "../public/noBack.png";
 import Image from "next/image";
 
 export default function Navbar() {
-  const [isAtTop, setIsAtTop] = useState(window.location.href.endsWith("/"));
+  const [isAtTop, setIsAtTop] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const navLinks = ["#home", "/cranes", "/quote", "#about", "#contact"];
 
   useEffect(() => {
-    if (window.location.href.endsWith("/")) {
-      const home = document.getElementById("home");
-      const handleScroll = () => {
-        if (!home) return;
-        // if we've scrolled past the bottom of the home
-        setIsAtTop(window.scrollY < home.offsetHeight - 150);
-      };
-      window.addEventListener("scroll", handleScroll);
-      handleScroll(); // initialize
-      return () => window.removeEventListener("scroll", handleScroll);
-    }
+    const home = document.getElementById("home");
+    const handleScroll = () => {
+      if (!home) return;
+      // if we've scrolled past the bottom of the home
+      setIsAtTop(window.scrollY < home.offsetHeight - 150);
+    };
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // initialize
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleNavClick = (href: string, e: React.MouseEvent) => {
     if (href.startsWith("#")) {
       e.preventDefault();
-
       if (window.location.href.endsWith("/")) {
         const element = document.getElementById(href.substring(1));
         if (element) {
@@ -38,6 +36,8 @@ export default function Navbar() {
         window.location.href = "/";
       }
       setIsOpen(false);
+    }else{
+      setIsAtTop(false);
     }
   };
 
@@ -85,16 +85,14 @@ export default function Navbar() {
           </Link>
         </div>
         <div className="hidden md:flex space-x-6">
-          {["#home", "/cranes", "#services", "#about", "#contact"].map((id) => (
+          {navLinks.map((id) => (
             <Link
               className="hover:text-orange-400 transition-colors text-white"
               key={id}
               href={id.startsWith("/") ? id : id}
               onClick={(e) => handleNavClick(id, e)}
             >
-              {id.startsWith("/")
-                ? "Cranes"
-                : id.charAt(1).toUpperCase() + id.slice(2)}
+              {id.charAt(1).toUpperCase() + id.slice(2)}
             </Link>
           ))}
         </div>
@@ -131,7 +129,7 @@ export default function Navbar() {
           {/* Menu dropdown */}
           <div className="mobile-menu md:hidden absolute top-full left-0 w-full bg-gray-900 shadow-lg z-50">
             <div className="px-4 py-6 space-y-4">
-              {["#home", "/cranes", "#services", "#about", "#contact"].map(
+              {navLinks.map(
                 (id) => (
                   <Link
                     key={id}

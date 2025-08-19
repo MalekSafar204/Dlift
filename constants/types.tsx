@@ -1,4 +1,5 @@
 export interface Crane {
+  id: string;
   name: string;
   capacity: string;
   year: string;
@@ -14,4 +15,17 @@ export interface CraneCategory {
   description: string;
   cranes: Crane[];
   image: string;
+}
+
+export interface QuoteFormState {
+  categoryId: string;
+  modelName: string;
+  company: string;
+  contactName: string;
+  phone: string;
+  email: string;
+  workType: string;
+  location: string;
+  startDate: string;
+  endDate: string;
 }

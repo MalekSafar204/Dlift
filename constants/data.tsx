@@ -10,6 +10,7 @@ export const craneCategories: CraneCategory[] = [
     image: "/ATC.jpg",
     cranes: [
       {
+        id: "atc-ltm-1120",
         name: "LTM 1120",
         capacity: "70 ton",
         year: "1991 & other years",
@@ -19,6 +20,7 @@ export const craneCategories: CraneCategory[] = [
           "A versatile all-terrain crane ideal for heavy lifting in construction and industrial projects, known for its reliability and reach.",
       },
       {
+        id: "atc-ltm-1100",
         name: "LTM 1100",
         capacity: "65 ton",
         year: "1994",
@@ -28,6 +30,7 @@ export const craneCategories: CraneCategory[] = [
           "Compact and powerful, this crane is suited for urban and confined job sites requiring efficient lifting solutions.",
       },
       {
+        id: "atc-ltm-1300",
         name: "LTM 1300",
         capacity: "300 ton",
         year: "2002",
@@ -37,6 +40,7 @@ export const craneCategories: CraneCategory[] = [
           "High-capacity crane designed for demanding lifts in infrastructure and energy sectors, offering advanced technology and safety.",
       },
       {
+        id: "atc-ltm-1300-1",
         name: "LTM 1300/1",
         capacity: "300 ton",
         year: "2001",
@@ -46,6 +50,7 @@ export const craneCategories: CraneCategory[] = [
           "Engineered for versatility and strength, suitable for large-scale construction and industrial lifting tasks.",
       },
       {
+        id: "atc-ltm-1500-8-1",
         name: "LTM 1500-8.1",
         capacity: "500 ton",
         year: "2002",
@@ -55,6 +60,7 @@ export const craneCategories: CraneCategory[] = [
           "One of the most powerful mobile cranes, perfect for heavy-duty lifting in wind energy, bridge, and plant construction.",
       },
       {
+        id: "atc-ac-200-1",
         name: "AC 200-1",
         capacity: "250 ton",
         year: "2005",
@@ -64,6 +70,7 @@ export const craneCategories: CraneCategory[] = [
           "Efficient and robust, this Demag crane is ideal for large construction projects and industrial applications.",
       },
       {
+        id: "atc-ac-100",
         name: "AC 100",
         capacity: "100 ton",
         year: "2007",
@@ -83,6 +90,7 @@ export const craneCategories: CraneCategory[] = [
     image: "/TC.jpg",
     cranes: [
       {
+        id: "tc-qy25k",
         name: "QY25K",
         capacity: "25 ton",
         year: "multiple years",
@@ -92,6 +100,7 @@ export const craneCategories: CraneCategory[] = [
           "A reliable truck crane for light to medium lifting, ideal for quick deployment and urban construction sites.",
       },
       {
+        id: "tc-qy50b",
         name: "QY50B",
         capacity: "50 ton",
         year: "multiple years",
@@ -101,6 +110,7 @@ export const craneCategories: CraneCategory[] = [
           "Versatile and efficient, this model is suited for a range of lifting tasks in construction and logistics.",
       },
       {
+        id: "tc-qy65k",
         name: "QY65K",
         capacity: "65 ton",
         year: "multiple years",
@@ -110,6 +120,7 @@ export const craneCategories: CraneCategory[] = [
           "Designed for higher capacity lifts, this crane is perfect for infrastructure and industrial projects.",
       },
       {
+        id: "tc-qy70k",
         name: "QY70K",
         capacity: "70 ton",
         year: "multiple years",
@@ -119,6 +130,7 @@ export const craneCategories: CraneCategory[] = [
           "A robust truck crane for heavy lifting, suitable for demanding construction and industrial environments.",
       },
       {
+        id: "tc-180-e-28",
         name: "180 E 28",
         capacity: "Truck-mounted",
         year: "N/A",
@@ -138,6 +150,7 @@ export const craneCategories: CraneCategory[] = [
     image: "/RTC.jpg",
     cranes: [
       {
+        id: "rtc-rt-555",
         name: "RT 555",
         capacity: "30 ton",
         year: "2007",
@@ -147,6 +160,7 @@ export const craneCategories: CraneCategory[] = [
           "Rough terrain crane designed for off-road performance and reliable lifting in challenging environments.",
       },
       {
+        id: "rtc-rt-555-1",
         name: "RT 555-1",
         capacity: "55 ton",
         year: "2007",
@@ -166,6 +180,7 @@ export const craneCategories: CraneCategory[] = [
     image: "/CRAWLER.jpg",
     cranes: [
       {
+        id: "crawler-scc1000",
         name: "SCC1000",
         capacity: "100 ton",
         year: "2008",
@@ -175,6 +190,7 @@ export const craneCategories: CraneCategory[] = [
           "Crawler crane with high lifting capacity, ideal for large-scale construction and infrastructure projects.",
       },
       {
+        id: "crawler-scc500d",
         name: "SCC500D",
         capacity: "50 ton",
         year: "2007",
@@ -184,6 +200,7 @@ export const craneCategories: CraneCategory[] = [
           "Efficient crawler crane for medium lifting tasks, suitable for construction and industrial use.",
       },
       {
+        id: "crawler-scc3200",
         name: "SCC3200",
         capacity: "320 ton",
         year: "2008",
@@ -193,6 +210,7 @@ export const craneCategories: CraneCategory[] = [
           "Heavy-duty crawler crane for the most demanding lifting operations in energy and infrastructure sectors.",
       },
       {
+        id: "crawler-quy70",
         name: "QUY70",
         capacity: "70 ton",
         year: "2007, 2003",
@@ -202,6 +220,7 @@ export const craneCategories: CraneCategory[] = [
           "Reliable crawler crane for medium to heavy lifting, suitable for construction and industrial projects.",
       },
       {
+        id: "crawler-scx2500",
         name: "SCX2500",
         capacity: "250 ton",
         year: "2005",
@@ -211,6 +230,7 @@ export const craneCategories: CraneCategory[] = [
           "High-capacity crawler crane, perfect for infrastructure, energy, and large-scale construction projects.",
       },
       {
+        id: "crawler-lr-1280",
         name: "LR 1280",
         capacity: "200 ton",
         year: "1993",
@@ -220,6 +240,7 @@ export const craneCategories: CraneCategory[] = [
           "Versatile crawler crane for heavy lifting, known for its stability and performance on challenging terrain.",
       },
       {
+        id: "crawler-hs843hd",
         name: "HS843HD",
         capacity: "100 ton",
         year: "2003",
@@ -229,6 +250,7 @@ export const craneCategories: CraneCategory[] = [
           "Heavy-duty crawler crane, ideal for foundation work and large construction projects.",
       },
       {
+        id: "crawler-6100",
         name: "6100",
         capacity: "100 ton",
         year: "1999",
@@ -238,6 +260,7 @@ export const craneCategories: CraneCategory[] = [
           "Reliable crawler crane for a variety of lifting tasks in construction and industry.",
       },
       {
+        id: "crawler-ch135",
         name: "CH135",
         capacity: "135 ton",
         year: "N/A",
@@ -247,6 +270,7 @@ export const craneCategories: CraneCategory[] = [
           "Specialized crawler crane for heavy lifting, suitable for unique and challenging project requirements.",
       },
       {
+        id: "crawler-cch",
         name: "CCH",
         capacity: "120 ton",
         year: "1991",
@@ -256,6 +280,7 @@ export const craneCategories: CraneCategory[] = [
           "Efficient crawler crane for medium to heavy lifting, ideal for construction and industrial use.",
       },
       {
+        id: "crawler-ls-248-h",
         name: "LS 248 H",
         capacity: "100 ton",
         year: "1987",
@@ -265,6 +290,7 @@ export const craneCategories: CraneCategory[] = [
           "Classic crawler crane, known for its durability and reliability in various lifting operations.",
       },
       {
+        id: "crawler-mc136",
         name: "MC136",
         capacity: "55 ton",
         year: "1990",
@@ -284,6 +310,7 @@ export const craneCategories: CraneCategory[] = [
     image: "/MOBILE.jpg",
     cranes: [
       {
+        id: "special-gmk-5130",
         name: "GMK 5130",
         capacity: "130 ton",
         year: "1998",
@@ -293,6 +320,7 @@ export const craneCategories: CraneCategory[] = [
           "Mobile harbour crane designed for heavy lifting in ports and special applications.",
       },
       {
+        id: "special-gmk-5100",
         name: "GMK 5100",
         capacity: "100 ton",
         year: "2003",
@@ -302,6 +330,7 @@ export const craneCategories: CraneCategory[] = [
           "Versatile mobile crane for a range of lifting tasks in specialized environments.",
       },
       {
+        id: "special-gmk-3050",
         name: "GMK 3050",
         capacity: "50 ton",
         year: "1999, 2000",
@@ -321,6 +350,7 @@ export const craneCategories: CraneCategory[] = [
     image: "/SUPPORT.jpg",
     cranes: [
       {
+        id: "support-lowbed-trailers",
         name: "Lowbed Trailers",
         capacity: "Various capacities",
         year: "Multiple years",
@@ -330,6 +360,7 @@ export const craneCategories: CraneCategory[] = [
           "Essential for transporting heavy equipment and cranes to and from job sites, ensuring safe and efficient logistics.",
       },
       {
+        id: "support-daf-2100",
         name: "DAF 2100",
         capacity: "Manlift",
         year: "N/A",
@@ -339,6 +370,7 @@ export const craneCategories: CraneCategory[] = [
           "Reliable manlift for safe access to elevated work areas, supporting a variety of maintenance and installation tasks.",
       },
       {
+        id: "support-mercedes",
         name: "Mercedes",
         capacity: "Tractor",
         year: "N/A",

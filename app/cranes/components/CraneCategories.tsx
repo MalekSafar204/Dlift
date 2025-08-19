@@ -4,7 +4,7 @@ import MobileCraneCard from "./MobileCraneCard";
 
 export default function CraneCategories() {
   return (
-    <div className="space-y-0">
+    <div id="categories" className="space-y-0">
       {craneCategories.map((category, index) => (
         <div key={category.id}>
           <DesktopCraneCard category={category} index={index} />
