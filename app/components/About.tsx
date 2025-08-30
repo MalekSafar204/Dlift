@@ -1,5 +1,6 @@
 // components/About.tsx
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 export const About: React.FC = () => (
@@ -14,36 +15,41 @@ export const About: React.FC = () => (
       <div className="flex flex-col md:flex-row gap-8 items-center">
         <div className="md:w-1/2">
           <Image
-          width={600}
-          height={300}
+            width={600}
+            height={300}
             src="/logoUpright.jpg"
             alt="Construction site with multiple cranes"
-            className="rounded-lg shadow-lg w-full"
+            className="rounded-md shadow-lg w-full"
           />
         </div>
         <div className="md:w-1/2">
           <h3 className="text-2xl font-bold mb-4">Our Story</h3>
           <p className="mb-4 text-gray-700">
-            Founded in 1997, HeavyLift Crane Rentals started with just two
-            cranes and a vision to provide reliable lifting solutions. Today we
-            operate a fleet of over 50 cranes across the region, but we still
-            maintain our family-owned approach to service.
+            DLIFT is a UAE-based crane rental company led by an experienced
+            management team with decades of operational expertise in the heavy
+            lifting sector. This team continues to oversee the operations of
+            Adrighem & Aldibiki in Egypt - a prominent crane company serving
+            major infrastructure and industrial projects since the 1970s.
           </p>
           <p className="mb-4 text-gray-700">
-            Our team of certified professionals brings decades of combined
-            experience to every project, ensuring safety, efficiency, and
-            cost-effectiveness.
+            Drawing on this established track record, DLIFT was created to
+            deliver the same high standards of quality, safety, and efficiency
+            to the UAE market, offering crane rental solutions from 25 tons to
+            2000 tons.
           </p>
+          <Link href={"https://aldibiki.com/"} className="mb-4 text-blue-600 hover:underline">
+            Our Heritage: Visit Adrighem & Aldibiki's Website
+          </Link>
           <div className="flex items-center gap-4 mt-6">
-            <div className="bg-gray-800 text-white px-4 py-2 rounded-lg text-center">
+            <div className="bg-gray-800 text-white px-4 py-2 rounded-md text-center">
               <div className="text-2xl font-bold">50+</div>
               <div>Cranes in Fleet</div>
             </div>
-            <div className="bg-gray-800 text-white px-4 py-2 rounded-lg text-center">
+            <div className="bg-gray-800 text-white px-4 py-2 rounded-md text-center">
               <div className="text-2xl font-bold">25</div>
               <div>Years Experience</div>
             </div>
-            <div className="bg-gray-800 text-white px-4 py-2 rounded-lg text-center">
+            <div className="bg-gray-800 text-white px-4 py-2 rounded-md text-center">
               <div className="text-2xl font-bold">500+</div>
               <div>Projects Completed</div>
             </div>

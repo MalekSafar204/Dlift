@@ -177,7 +177,7 @@ export const craneCategories: CraneCategory[] = [
     href: "crawler",
     description:
       "Heavy-duty cranes with tracked undercarriages for maximum stability and lifting capacity on challenging terrain. From 50 to 320 tons, our crawler fleet handles the most complex lifting operations.",
-    image: "/CRAWLER.jpg",
+    image: "/crawler/crawler.jpg",
     cranes: [
       {
         id: "crawler-scc1000",
@@ -343,10 +343,10 @@ export const craneCategories: CraneCategory[] = [
   },
   {
     id: "equipment",
-    title: "Supporting Equipment",
+    title: "Transportation and Supporting Equipment",
     href: "support",
     description:
-      "Essential support equipment including trailers, manlifts, and tractors to complete your project requirements. Complete solutions for comprehensive project support.",
+      "Essential transport and support equipment including trailers, manlifts, and tractors to complete your project requirements. Complete solutions for comprehensive project support.",
     image: "/SUPPORT.jpg",
     cranes: [
       {

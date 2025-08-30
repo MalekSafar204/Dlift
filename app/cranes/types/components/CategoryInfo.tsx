@@ -11,7 +11,7 @@ export default function CategoryInfo({ category }: CategoryInfoProps) {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Category Image */}
           <div className="relative">
-            <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
+            <div className="aspect-[4/3] rounded-md overflow-hidden shadow-2xl">
               <img
                 src={category.image}
                 alt={category.title}

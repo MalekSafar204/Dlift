@@ -48,7 +48,6 @@ function CustomCraneRequest() {
     if (!form.categoryId) missing.push("category");
     if (form.categoryId === "other" && !form.customCategoryName) missing.push("custom category name");
     if (!form.capacity) missing.push("capacity");
-    if (!form.requestedModel) missing.push("requested model");
     if (!form.location) missing.push("location");
     if (!form.startDate) missing.push("start date");
     if (!form.endDate) missing.push("end date");
@@ -160,7 +159,7 @@ function CustomCraneRequest() {
               </div>
               <div>
                 <label className="block font-medium mb-2" htmlFor="custom-requestedModel">
-                  Requested Model (Name / Series) <span className="text-orange-500">*</span>
+                  Requested Model (Name / Series) (optional)
                 </label>
                 <input
                   id="custom-requestedModel"
@@ -169,7 +168,6 @@ function CustomCraneRequest() {
                   onChange={handleChange}
                   className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-orange-500"
                   placeholder="e.g. LTM 1400"
-                  required
                 />
               </div>
               <div>
