@@ -15,10 +15,27 @@ export default function DesktopCraneCard({
   return (
     <div className="group relative hidden lg:block h-[500px] overflow-hidden">
       {/* Full-bleed image (never shrinks, only zooms) */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-[1200ms] ease-[cubic-bezier(.22,.61,.36,1)] origin-center group-hover:scale-[1.06] group-hover:brightness-110 group-hover:contrast-105"
-        style={{ backgroundImage: `url(${category.image})` }}
-      />
+      <div className="absolute inset-0 flex flex-row transition-all duration-[1200ms] ease-[cubic-bezier(.22,.61,.36,1)] origin-center group-hover:scale-[1.06] group-hover:brightness-110 group-hover:contrast-105">
+        {isLeft ? (
+          <>
+            <div className="w-[40%] bg-[#293344] h-full" />
+            <img
+              src={category.image}
+              alt={category.title}
+              className="object-cover w-[60%] h-full"
+            />
+          </>
+        ) : (
+          <>
+            <img
+              src={category.image}
+              alt={category.title}
+              className="object-cover w-[60%] h-full"
+            />
+            <div className="w-[40%] bg-[#1f2839] h-full" />
+          </>
+        )}
+      </div>
       {/* Subtle darken/brighten */}
       <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-all duration-500" />
 
@@ -28,7 +45,7 @@ export default function DesktopCraneCard({
           isLeft ? "overlay-left" : "overlay-right"
         }`}
       >
-        <div className="h-full bg-gradient-to-br from-gray-900 to-gray-700/95 p-12 flex flex-col justify-center">
+        <div className="h-full bg-gradient-to-br from-gray-900 to-gray-700 p-12 flex flex-col justify-center">
           <div className={`max-w-md ${isLeft ? "" : "ml-auto"}`}>
             <h2 className="text-4xl font-bold mb-4 text-white/85">
               {category.title}

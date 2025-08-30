@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Hero() {
   return (
     <section
@@ -12,8 +14,8 @@ export default function Hero() {
       <div className="relative max-w-4xl text-white p-8 rounded-lg">
         <h1 className="text-4xl md:text-6xl font-bold mb-6">Our Crane Fleet</h1>
         <p className="text-xl md:text-2xl mb-8">
-          Comprehensive range of professional-grade cranes and lifting
-          equipment to meet all your project requirements
+          Comprehensive range of professional-grade cranes and lifting equipment
+          to meet all your project requirements
         </p>
         <div className="flex flex-wrap justify-center gap-4">
           <a
@@ -22,12 +24,12 @@ export default function Hero() {
           >
             Browse Categories
           </a>
-          <a
-            href="/#contact"
+          <Link
+            href="/quote"
             className="border-2 border-white hover:bg-white hover:text-gray-900 text-white font-bold py-3 px-6 rounded-full transition transform hover:scale-105"
           >
             Get a Quote
-          </a>
+          </Link>
         </div>
       </div>
     </section>

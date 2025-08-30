@@ -147,7 +147,7 @@ export const craneCategories: CraneCategory[] = [
     href: "rtc",
     description:
       "Specialized cranes built for challenging off-road conditions with enhanced stability and mobility. Our Terex models provide reliable performance in the most demanding environments.",
-    image: "/RTC.jpg",
+    image: "/RTC2.jpg",
     cranes: [
       {
         id: "rtc-rt-555",
