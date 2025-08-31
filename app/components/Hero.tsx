@@ -3,7 +3,7 @@ export default function Hero() {
     <section
       id="home"
       className="relative h-screen flex items-center justify-center text-center px-4 bg-cover bg-center"
-      style={{ backgroundImage: "url('/hero6.jpg')" }}
+  style={{ backgroundImage: "url('/hero/heroHome.jpg')" }}
     >
       {/* Full‑section overlay */}
       <div className="absolute inset-0 bg-black/60" />

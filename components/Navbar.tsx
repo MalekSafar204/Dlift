@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Logo from "../public/noBack.png";
 import Image from "next/image";
 
 export default function Navbar() {
@@ -75,7 +74,7 @@ export default function Navbar() {
             onClick={(e) => handleNavClick("#home", e)}
           >
             <Image
-              src={Logo}
+              src="/logos/noBack.png"
               alt="DLift Crane Rentals logo"
               width={190}
               height={70}

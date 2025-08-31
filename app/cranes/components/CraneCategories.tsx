@@ -1,4 +1,4 @@
-import { craneCategories } from "@/constants/data";
+// import { craneCategories } from "@/constants/data";
 import DesktopCraneCard from "./DesktopCraneCard";
 import MobileCraneCard from "./MobileCraneCard";
 

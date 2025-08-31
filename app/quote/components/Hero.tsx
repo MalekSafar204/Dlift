@@ -2,7 +2,7 @@ export default function Hero() {
   return (
     <section
       className="relative h-[70vh] md:h-screen flex items-center justify-center text-center px-4 bg-cover bg-center"
-      style={{ backgroundImage: "url('/hero3.jpg')" }}
+  style={{ backgroundImage: "url('/hero/heroQuote.jpg')" }}
     >
       <div className="absolute inset-0 bg-black/60" />
       <div className="relative max-w-3xl text-white p-8 rounded-lg">

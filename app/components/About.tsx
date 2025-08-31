@@ -17,7 +17,7 @@ export const About: React.FC = () => (
           <Image
             width={600}
             height={300}
-            src="/logoUpright.jpg"
+            src="/logos/logoUpright.jpg"
             alt="Construction site with multiple cranes"
             className="rounded-md shadow-lg w-full"
           />

@@ -1,30 +1,50 @@
 /* eslint-disable no-console */
+
+// Load env from .env.local (first) then .env (fallback)
+import { config as loadEnv } from 'dotenv';
+loadEnv({ path: '.env.local' });
+loadEnv();
+
 import { createClient } from '@supabase/supabase-js';
-import * as fs from 'fs';
-import * as path from 'path';
-import { craneCategories } from '@/data/cranes'; 
+import fs from 'fs';
+import path from 'path';
+import { craneCategories } from '../data/cranes'; // <-- use relative path (tsx doesn't resolve "@/")
+
+// ---- CONFIG ----
+const BASE_LOCAL_DIR = 'public'; // your images live under /public now
+const BUCKET = 'cranes';         // storage bucket name you created earlier
+
+// If any category hero image path in the data doesn't match your real files,
+// put an override here (relative to /public). Example shown, keep empty if not needed.
+const categoryImageOverrides: Record<string, string> = {
+  // atc: 'ATC.jpg',
+  // tc: 'TC.jpg',
+  // rtc: 'RTC2.jpg',
+  // special: 'MOBILE.jpg',
+  // equipment: 'SUPPORT.jpg',
+  // crawler: 'crawler/crawler.jpg',
+};
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY! // service key bypasses RLS for write
+  process.env.SUPABASE_SERVICE_ROLE_KEY! // service key bypasses RLS (server-only!)
 );
 
 function toObjectPath(p: string) {
-  // your paths start with '/atc/..' -> store under 'atc/..' in bucket
-  return p.replace(/^\//, '').replace(/^\//, '');
+  // turn "/atc/LTM-1120.jpg" into "atc/LTM-1120.jpg"
+  return p.replace(/^\//, '');
 }
 
 function capacityToNumber(cap: string | undefined | null): number | null {
   if (!cap) return null;
-  // pick first integer in the string; if none, return null
   const m = cap.match(/(\d+(\.\d+)?)/);
   return m ? Number(m[1]) : null;
 }
 
 async function uploadIfNeeded(localRel: string): Promise<string | null> {
-  // localRel examples: 'atc/LTM-1120.jpg'
+  // localRel examples: 'ATC.jpg' or 'atc/LTM-1120.jpg'
   const bucketObjectKey = toObjectPath(localRel);
-  const localFsPath = path.join(process.cwd(), 'public', 'cranes', localRel);
+  const localFsPath = path.join(process.cwd(), BASE_LOCAL_DIR, localRel);
 
   if (!fs.existsSync(localFsPath)) {
     console.warn('Image missing locally, skipping upload:', localFsPath);
@@ -40,26 +60,48 @@ async function uploadIfNeeded(localRel: string): Promise<string | null> {
     : 'application/octet-stream';
 
   const { error: upErr } = await supabase.storage
-    .from('cranes')
+    .from(BUCKET)
     .upload(bucketObjectKey, fileBuf, { upsert: true, contentType });
 
   if (upErr) {
-    // If it already exists and upsert failed for any reason, continue
     console.warn('Upload warning:', bucketObjectKey, upErr.message);
   }
 
-  const { data } = supabase.storage.from('cranes').getPublicUrl(bucketObjectKey);
+  const { data } = supabase.storage.from(BUCKET).getPublicUrl(bucketObjectKey);
   return data.publicUrl;
 }
 
-async function main() {
-  // Insert categories first
-  for (const cat of craneCategories) {
-    // Upload category image
-    const catImageKey = toObjectPath(cat.image.replace(/^\//, '')); // e.g. 'ATC.jpg' → 'ATC.jpg'
-    const catImageUrl = await uploadIfNeeded(catImageKey).catch(() => null);
+async function verifyAllFiles() {
+  const missing: string[] = [];
 
-    // Upsert category
+  for (const cat of craneCategories) {
+    const catRel = toObjectPath(categoryImageOverrides[cat.id] ?? cat.image);
+    if (!fs.existsSync(path.join(process.cwd(), BASE_LOCAL_DIR, catRel))) {
+      missing.push(catRel);
+    }
+    for (const c of cat.cranes) {
+      const rel = toObjectPath(c.image);
+      if (!fs.existsSync(path.join(process.cwd(), BASE_LOCAL_DIR, rel))) {
+        missing.push(rel);
+      }
+    }
+  }
+
+  if (missing.length) {
+    console.error('❌ Missing local files (check names/case & folders):\n' + missing.join('\n'));
+    process.exit(1);
+  }
+}
+
+async function main() {
+  // Hard stop if any file path doesn't exist locally
+  await verifyAllFiles();
+
+  // Insert/Upsert categories
+  for (const cat of craneCategories) {
+    const catImageRel = toObjectPath(categoryImageOverrides[cat.id] ?? cat.image);
+    const catImageUrl = await uploadIfNeeded(catImageRel).catch(() => null);
+
     const { error: catErr } = await supabase
       .from('crane_categories')
       .upsert(
@@ -74,10 +116,9 @@ async function main() {
       );
     if (catErr) throw catErr;
 
-    // Insert cranes
+    // Insert/Upsert cranes
     for (const c of cat.cranes) {
-      // Upload crane image (your `image` starts with '/atc/...'; we map to 'atc/...' under 'public/cranes')
-      const rel = c.image.replace(/^\//, '');        // 'atc/LTM-1120.jpg'
+      const rel = toObjectPath(c.image); // e.g. 'atc/LTM-1120.jpg'
       const craneImageUrl = await uploadIfNeeded(rel).catch(() => null);
 
       const { error: craneErr } = await supabase
