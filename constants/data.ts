@@ -177,7 +177,7 @@ export const craneCategories: CraneCategory[] = [
     href: "crawler",
     description:
       "Heavy-duty cranes with tracked undercarriages for maximum stability and lifting capacity on challenging terrain. From 50 to 320 tons, our crawler fleet handles the most complex lifting operations.",
-    image: "/crawler/crawler.jpg",
+    image: "/crawler.jpg",
     cranes: [
       {
         id: "crawler-scc1000",
