@@ -1,17 +1,19 @@
-import { CraneCategory } from "@/constants/types";
+import { UiCategory } from "@/constants/types";
 
 interface CategoryInfoProps {
-  category: CraneCategory;
+  category: UiCategory;
+  count: number;
+  maxCap: number | null;
 }
 
-export default function CategoryInfo({ category }: CategoryInfoProps) {
+export default function CategoryInfo({ category, count, maxCap }: CategoryInfoProps) {
   return (
     <div className="bg-white py-16">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Category Image */}
           <div className="relative">
-            <div className="aspect-[4/3] rounded-md overflow-hidden shadow-2xl">
+            <div className="aspect-[4/3] rounded-sm overflow-hidden shadow-2xl">
               <img
                 src={category.image}
                 alt={category.title}
@@ -36,20 +38,13 @@ export default function CategoryInfo({ category }: CategoryInfoProps) {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <span className="text-2xl font-bold text-orange-500">
-                    {category.cranes.length}
+                    {count}
                   </span>
                   <p className="text-gray-600">Available Models</p>
                 </div>
                 <div>
                   <span className="text-2xl font-bold text-orange-500">
-                    {category.cranes.length > 0
-                      ? Math.max(
-                          ...category.cranes.map(
-                            (crane) =>
-                              parseInt(crane.capacity.replace(/\D/g, "")) || 0
-                          )
-                        ) + "+"
-                      : "N/A"}
+                    {maxCap}
                   </span>
                   <p className="text-gray-600">Max Capacity (tons)</p>
                 </div>

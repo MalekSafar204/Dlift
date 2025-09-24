@@ -1,7 +1,7 @@
-import { CraneCategory } from "@/constants/types";
+import { UiCategory } from "@/constants/types";
 
 interface HeroProps {
-  category: CraneCategory;
+  category: UiCategory;
 }
 
 export default function Hero({ category }: HeroProps) {

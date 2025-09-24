@@ -29,3 +29,44 @@ export interface QuoteFormState {
   startDate: string;
   endDate: string;
 }
+
+// Supabase DB row types
+export interface CraneCategoryRow {
+  id: string;
+  title: string;
+  href: string;
+  description: string;
+  image_url: string | null;
+}
+
+export interface CraneRow {
+  id: string;
+  category_id: string;
+  name: string;
+  capacity_text: string | null;
+  capacity_ton: number | null;
+  year_text: string | null;
+  manufacturer: string | null;
+  image_url: string | null;
+  description: string | null;
+}
+
+// UI-layer types used across multiple components
+export interface UiCategory {
+  id: string;
+  title: string;
+  href: string;
+  description: string;
+  image: string;
+  cranesCount?: number; // optional so it can be reused where count isn’t needed
+}
+
+export interface UiCrane {
+  id: string;
+  name: string;
+  capacity: string;
+  year: string;
+  manufacturer: string;
+  image: string;
+  description: string;
+}

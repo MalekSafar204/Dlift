@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { CraneCategory } from "@/constants/types";
+import { UiCategory } from "@/constants/types";
 
 interface MobileCraneCardProps {
-  category: CraneCategory;
+  category: UiCategory;
 }
 
 export default function MobileCraneCard({ category }: MobileCraneCardProps) {
@@ -21,7 +21,7 @@ export default function MobileCraneCard({ category }: MobileCraneCardProps) {
         <p className="text-gray-300 mb-4">{category.description}</p>
         <div className="flex items-center justify-between">
           <span className="text-orange-400 font-semibold">
-            {category.cranes.length} models available
+            {category.cranesCount} models available
           </span>
           <Link
             href={`/cranes/types?category=${category.href}`}

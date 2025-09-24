@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useMemo, useEffect } from "react";
-import { craneCategories } from "@/constants/data";
+import { craneCategories } from "@/constants/data"; 
 import Image from "next/image";
 import { Crane, CraneCategory, QuoteFormState } from "@/constants/types";
 import { useSearchParams } from "next/navigation";

@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { CraneCategory } from "@/constants/types";
+import { UiCategory } from "@/constants/types";
 
 interface DesktopCraneCardProps {
-  category: CraneCategory;
+  category: UiCategory;
   index: number;
 }
 
@@ -55,7 +55,7 @@ export default function DesktopCraneCard({
             </p>
             <div className="flex items-center justify-between mb-4">
               <span className="text-orange-400 font-semibold">
-                {category.cranes.length} models available
+                {category.cranesCount} models available
               </span>
               <Link
                 href={`/cranes/types?category=${category.href}`}

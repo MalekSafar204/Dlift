@@ -1,9 +1,9 @@
-import { Crane } from "@/constants/types";
+import { UiCrane } from "@/constants/types";
 import Image from "next/image";
 import Link from "next/link";
 
 interface CraneModelsProps {
-  cranes: Crane[];
+  cranes: UiCrane[];
 }
 
 export default function CraneModels({ cranes }: CraneModelsProps) {
