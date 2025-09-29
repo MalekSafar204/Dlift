@@ -70,3 +70,20 @@ export interface UiCrane {
   image: string;
   description: string;
 }
+
+// API payloads
+export type QuoteRequestPayload = {
+  categoryId: string;
+  modelId?: string | null; // Using model name today; you can switch to id later
+  company: string;
+  contactName: string;
+  phone: string;
+  email: string;
+  workType: string;
+  location: string;
+  startDate: string; // yyyy-mm-dd
+  endDate: string;   // yyyy-mm-dd
+  capacityNeeded?: string; // Used by custom request variant
+  preferredManufacturer?: string | null;
+  notes?: string | null;
+};

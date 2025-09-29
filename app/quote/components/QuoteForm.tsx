@@ -36,13 +36,16 @@ function CustomCraneRequest() {
   customCategoryName: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successId, setSuccessId] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const missing: string[] = [];
     if (!form.categoryId) missing.push("category");
@@ -60,25 +63,60 @@ function CustomCraneRequest() {
       alert(`Please fill all required fields: ${missing.join(", ")}`);
       return;
     }
-    console.log("Custom Crane Request Submitted", form);
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 4000);
-    setForm({
-      categoryId: "",
-      capacity: "",
-      manufacturer: "",
-      requestedModel: "",
-      location: "",
-      startDate: "",
-      endDate: "",
-      company: "",
-      contactName: "",
-      phone: "",
-      email: "",
-      details: "",
-      customCategoryName: "",
-    });
-    setOpen(false);
+    setSubmitting(true);
+    setError(null);
+    try {
+      const notes = [
+        form.customCategoryName ? `Custom Category: ${form.customCategoryName}` : null,
+        form.requestedModel ? `Requested Model: ${form.requestedModel}` : null,
+        form.details ? `Details: ${form.details}` : null,
+      ].filter(Boolean).join("\n");
+
+      const res = await fetch('/api/quotes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          categoryId: form.categoryId || 'other',
+          modelId: null,
+          company: form.company,
+          contactName: form.contactName,
+          phone: form.phone,
+          email: form.email,
+          workType: 'custom-request',
+          location: form.location,
+          startDate: form.startDate,
+          endDate: form.endDate,
+          capacityNeeded: form.capacity,
+          preferredManufacturer: form.manufacturer || null,
+          notes: notes || null,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Failed to submit');
+      setSuccessId(json.id);
+      setSubmitted(true);
+      setForm({
+        categoryId: "",
+        capacity: "",
+        manufacturer: "",
+        requestedModel: "",
+        location: "",
+        startDate: "",
+        endDate: "",
+        company: "",
+        contactName: "",
+        phone: "",
+        email: "",
+        details: "",
+        customCategoryName: "",
+      });
+      setTimeout(() => setSubmitted(false), 4000);
+      setOpen(false);
+    } catch (err: any) {
+      setError(err.message || 'Failed to submit');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -275,12 +313,16 @@ function CustomCraneRequest() {
             <div className="pt-2 flex items-center gap-4 w-full justify-center">
               <button
                 type="submit"
-                className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-md transition transform hover:scale-[1.02]"
+                className="bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white font-bold py-3 px-8 rounded-md transition transform hover:scale-[1.02]"
+                disabled={submitting}
               >
-                Submit Custom Request
+                {submitting ? 'Submitting…' : 'Submit Custom Request'}
               </button>
               {submitted && (
-                <span className="text-green-700 font-medium">Submitted! We'll be in touch.</span>
+                <span className="text-green-700 font-medium">Submitted! We'll be in touch. {successId ? `Ref: ${successId}` : ''}</span>
+              )}
+              {error && (
+                <span className="text-red-700 font-medium">{error}</span>
               )}
             </div>
           </form>
@@ -295,6 +337,9 @@ export default function QuoteForm() {
   const searchParams = useSearchParams();
   const modelId = searchParams.get("model");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successId, setSuccessId] = useState<string | null>(null);
 
   useEffect(() => {
     if (modelId) {
@@ -334,7 +379,7 @@ export default function QuoteForm() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const requiredFields: (keyof typeof form)[] = [
       "categoryId",
@@ -354,10 +399,37 @@ export default function QuoteForm() {
       alert("Please fill all required fields before submitting.");
       return;
     }
-    console.log("Quote Request Submitted", form, selectedCrane);
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 4000);
-    setForm(initialState);
+    setSubmitting(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/quotes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          categoryId: form.categoryId,
+          modelId: selectedCrane?.id ?? null,
+          company: form.company,
+          contactName: form.contactName,
+          phone: form.phone,
+          email: form.email,
+          workType: form.workType,
+          location: form.location,
+          startDate: form.startDate,
+          endDate: form.endDate,
+          capacityNeeded: selectedCrane?.capacity || 'unspecified',
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Failed to submit');
+      setSuccessId(json.id);
+      setSubmitted(true);
+      setForm(initialState);
+      setTimeout(() => setSubmitted(false), 4000);
+    } catch (err: any) {
+      setError(err.message || 'Failed to submit');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const cranesForCategory = selectedCategory?.cranes ?? [];
@@ -567,14 +639,18 @@ export default function QuoteForm() {
           <div className="pt-4 flex items-center gap-4 w-full justify-center">
             <button
               type="submit"
-              className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-md transition transform hover:scale-[1.02]"
+              className="bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white font-bold py-3 px-8 rounded-md transition transform hover:scale-[1.02]"
+              disabled={submitting}
             >
-              Submit Request
+              {submitting ? 'Submitting…' : 'Submit Request'}
             </button>
             {submitted && (
               <span className="text-green-600 font-medium">
-                Submitted! We'll be in touch.
+                Submitted! We'll be in touch. {successId ? `Ref: ${successId}` : ''}
               </span>
+            )}
+            {error && (
+              <span className="text-red-600 font-medium">{error}</span>
             )}
           </div>
         </form>
