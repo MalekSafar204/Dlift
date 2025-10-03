@@ -5,7 +5,8 @@ import { sendReplyEmail } from '@/lib/mailer';
 
 export const runtime = 'nodejs';
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
+  const { id } = await ctx.params;
   if (!(await requireAdminSession())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   let body: any = {};
   try { body = await req.json(); } catch {}
@@ -13,7 +14,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const message = body?.message?.trim();
   if (!subject || !message) return NextResponse.json({ error: 'Missing subject or message' }, { status: 400 });
 
-  const { data: quote, error } = await supabaseServer.from('quote_requests').select('id,email,contact_name,company').eq('id', params.id).single();
+  const { data: quote, error } = await supabaseServer.from('quote_requests').select('id,email,contact_name,company').eq('id', id).single();
   if (error || !quote) return NextResponse.json({ error: 'Quote not found' }, { status: 404 });
   if (!quote.email) return NextResponse.json({ error: 'Quote has no email' }, { status: 400 });
 
