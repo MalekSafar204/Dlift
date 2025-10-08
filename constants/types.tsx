@@ -87,3 +87,26 @@ export type QuoteRequestPayload = {
   preferredManufacturer?: string | null;
   notes?: string | null;
 };
+
+// Quote requests (Supabase table: quote_requests)
+export type QuoteStatus = 'new' | 'in_review' | 'closed';
+
+// Row as stored in the DB
+export interface QuoteRequestRow {
+  id: string; // uuid
+  category_id: string | null; // text, can be null if freeform
+  model_id: string | null; // text, optional
+  company: string;
+  contact_name: string;
+  phone: string | null;
+  email: string;
+  work_type: string | null;
+  location: string | null;
+  start_date: string | null; // date (yyyy-mm-dd)
+  end_date: string | null;   // date (yyyy-mm-dd)
+  capacity_needed: string | null;
+  preferred_manufacturer: string | null;
+  notes: string | null;
+  status: QuoteStatus; // enum
+  created_at: string; // timestamptz ISO string
+}
