@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { sendQuoteReply, updateQuoteStatus } from '@/lib/quotesService';
 import type { QuoteRequestRow, QuoteStatus } from "@/constants/types";
 
 type Quote = QuoteRequestRow;
@@ -56,22 +57,10 @@ export default function QuotesDashboard({
   function updateStatus(id: string, status: QuoteStatus) {
     const prev = quotes;
     setQuotes((q) => q.map((r) => (r.id === id ? { ...r, status } : r)));
-    fetch(`/api/quotes/${id}/status`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    })
-      .then(async (res) => {
-        if (!res.ok) {
-          const j = await safeJson(res);
-          throw new Error(j?.error || "Failed to update status");
-        }
-        flash("success", "Status updated");
-      })
-      .catch((e) => {
-        setQuotes(prev);
-        flash("error", e?.message || "Failed to update status");
-      });
+    console.log("STATUS CHANGIN TO: ---->",status);
+    updateQuoteStatus(id, status)
+      .then(() => flash('success', 'Status updated'))
+      .catch((e: any) => { setQuotes(prev); flash('error', e?.response?.data?.error || e?.message || 'Failed to update status'); });
   }
 
   async function sendReply(form: HTMLFormElement) {
@@ -80,18 +69,14 @@ export default function QuotesDashboard({
     const fd = new FormData(form);
     const subject = fd.get("subject");
     const message = fd.get("message");
-    const res = await fetch(`/api/quotes/${selected.id}/reply`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ subject, message }),
-    });
-    setSending(false);
-    if (res.ok) {
+    try {
+      await sendQuoteReply(selected.id, String(subject), String(message));
+      setSending(false);
       setShowReply(false);
-      flash("success", "Reply sent");
-    } else {
-      const j = await safeJson(res);
-      flash("error", j?.error || "Failed to send");
+      flash('success', 'Reply sent');
+    } catch (e: any) {
+      setSending(false);
+      flash('error', e?.response?.data?.error || e?.message || 'Failed to send');
     }
   }
 
@@ -141,7 +126,7 @@ export default function QuotesDashboard({
           map[value] || "bg-gray-100 text-gray-700"
         }`}
       >
-        {value}
+        {value.replace("_"," ")}
       </span>
     );
   }
@@ -278,12 +263,14 @@ export default function QuotesDashboard({
                         <select
                           className="text-xs border border-[#E2E1E1] rounded px-1 py-0.5 bg-white"
                           value={q.status}
-                          onChange={(e) =>
+                          onChange={(e) =>{
+                            console.log(e.target.value);
+                            
                             updateStatus(q.id, e.target.value as QuoteStatus)
-                          }
+                          }}
                         >
                           <option value="new">new</option>
-                          <option value="in_review">in_review</option>
+                          <option value="in_review">in review</option>
                           <option value="closed">closed</option>
                         </select>
                       </div>

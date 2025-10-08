@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabaseServer } from '@/lib/supabaseServer';
+import { getQuoteHeaderForReply } from '@/lib/quotesService';
 import { requireAdminSession } from '@/lib/adminAuth';
 import { sendReplyEmail } from '@/lib/mailer';
 
@@ -14,8 +14,8 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   const message = body?.message?.trim();
   if (!subject || !message) return NextResponse.json({ error: 'Missing subject or message' }, { status: 400 });
 
-  const { data: quote, error } = await supabaseServer.from('quote_requests').select('id,email,contact_name,company').eq('id', id).single();
-  if (error || !quote) return NextResponse.json({ error: 'Quote not found' }, { status: 404 });
+  const quote = await getQuoteHeaderForReply(id);
+  if (!quote) return NextResponse.json({ error: 'Quote not found' }, { status: 404 });
   if (!quote.email) return NextResponse.json({ error: 'Quote has no email' }, { status: 400 });
 
   const userHtml = `<p>${message.replace(/\n/g,'<br/>')}</p><hr/><p>Reference: ${quote.id}</p>`;
