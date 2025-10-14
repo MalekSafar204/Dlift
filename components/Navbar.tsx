@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 export default function Navbar() {
   const [isAtTop, setIsAtTop] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const navLinks = ["#home", "/cranes", "/quote", "#about", "#contact"];
+  const navLinks = ["#home", "/cranes", "/quote", "/about", "#contact"];
   const pathname = usePathname();
 
   useEffect(() => {
