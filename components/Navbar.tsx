@@ -2,11 +2,13 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const [isAtTop, setIsAtTop] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const navLinks = ["#home", "/cranes", "/quote", "#about", "#contact"];
+  const pathname = usePathname();
 
   useEffect(() => {
     const home = document.getElementById("home");
@@ -35,8 +37,10 @@ export default function Navbar() {
         window.location.href = "/";
       }
       setIsOpen(false);
-    }else{
+    } else {
       setIsAtTop(false);
+      // Close immediately on navigation to a new page
+      setIsOpen(false);
     }
   };
 
@@ -55,6 +59,11 @@ export default function Navbar() {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, [isOpen]);
+
+  // Close the mobile menu whenever the route changes
+  useEffect(() => {
+    if (isOpen) setIsOpen(false);
+  }, [pathname]);
 
   return (
     <nav
@@ -117,35 +126,33 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
-      {isOpen && (
-        <>
-          {/* Semi-transparent black overlay */}
-          <div
-            className="mobile-menu md:hidden fixed inset-0 bg-black/50 z-40"
-            onClick={() => setIsOpen(false)}
-          />
-          {/* Menu dropdown */}
-          <div className="mobile-menu md:hidden absolute top-full left-0 w-full bg-gray-900 shadow-lg z-50">
-            <div className="px-4 py-6 space-y-4">
-              {navLinks.map(
-                (id) => (
-                  <Link
-                    key={id}
-                    href={id}
-                    className="block text-white hover:text-orange-400 transition-colors py-2 text-lg"
-                    onClick={(e) => handleNavClick(id, e)}
-                  >
-                    {id.startsWith("/")
-                      ? "Cranes"
-                      : id.charAt(1).toUpperCase() + id.slice(2)}
-                  </Link>
-                )
-              )}
-            </div>
-          </div>
-        </>
-      )}
+      {/* Mobile Menu (animated) */}
+      {/* Overlay */}
+      <div
+        className={`md:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
+          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setIsOpen(false)}
+      />
+      {/* Panel */}
+      <div
+        className={`mobile-menu md:hidden absolute top-full left-0 w-full bg-gray-900 shadow-lg z-50 transform transition-all duration-300 ${
+          isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-3 pointer-events-none"
+        }`}
+      >
+        <div className="px-4 py-6 space-y-4">
+          {navLinks.map((id) => (
+            <Link
+              key={id}
+              href={id}
+              className="block text-white hover:text-orange-400 transition-colors py-2 text-lg"
+              onClick={(e) => handleNavClick(id, e)}
+            >
+              {id.startsWith("/") ? "Cranes" : id.charAt(1).toUpperCase() + id.slice(2)}
+            </Link>
+          ))}
+        </div>
+      </div>
     </nav>
   );
 }
