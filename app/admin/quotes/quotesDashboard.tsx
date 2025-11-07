@@ -1,8 +1,10 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { sendQuoteReply, updateQuoteStatus } from "@/lib/quotesService";
 import type { QuoteRequestRow, QuoteStatus } from "@/constants/types";
+import DetailsModal from "./DetailsModal";
+import ReplyModal from "./ReplyModal";
 
 type Quote = QuoteRequestRow;
 
@@ -17,7 +19,8 @@ export default function QuotesDashboard({
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [sending, setSending] = useState(false);
   const [filter, setFilter] = useState<"all" | QuoteStatus>("all");
-  const [search, setSearch] = useState("");
+  const [searchCompany, setSearchCompany] = useState("");
+  const [searchContact, setSearchContact] = useState("");
   const [toast, setToast] = useState<{
     type: "success" | "error";
     msg: string;
@@ -113,16 +116,21 @@ export default function QuotesDashboard({
   const filtered = useMemo(() => {
     const base =
       filter === "all" ? quotes : quotes.filter((q) => q.status === filter);
-    const q = search.trim().toLowerCase();
-    if (!q) return base;
-    return base.filter(
-      (r) =>
-        r.company?.toLowerCase().includes(q) ||
-        r.contact_name?.toLowerCase().includes(q) ||
-        r.email?.toLowerCase().includes(q) ||
-        r.work_type?.toLowerCase().includes(q)
-    );
-  }, [quotes, filter, search]);
+    const companyQ = searchCompany.trim().toLowerCase();
+    const contactQ = searchContact.trim().toLowerCase();
+
+    if (!companyQ && !contactQ) return base;
+
+    return base.filter((r) => {
+      const matchCompany =
+        !companyQ || r.company?.toLowerCase().includes(companyQ);
+      const matchContact =
+        !contactQ ||
+        r.contact_name?.toLowerCase().includes(contactQ) ||
+        r.email?.toLowerCase().includes(contactQ);
+      return matchCompany && matchContact;
+    });
+  }, [quotes, filter, searchCompany, searchContact]);
 
   function StatusPill({ value }: { value: QuoteStatus }) {
     const map: Record<string, string> = {
@@ -161,14 +169,6 @@ export default function QuotesDashboard({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
-
-  // Focus management for reply modal
-  const replyFirstFieldRef = useRef<HTMLInputElement | null>(null);
-  useEffect(() => {
-    if (showReplyModal && replyFirstFieldRef.current) {
-      replyFirstFieldRef.current.focus();
-    }
-  }, [showReplyModal]);
 
   return (
     <div className="space-y-6 py-8 px-5 relative">
@@ -225,12 +225,18 @@ export default function QuotesDashboard({
             </button>
           ))}
         </div>
-        <div className="md:ml-auto">
+        <div className="md:ml-auto flex gap-2">
           <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search company, contact, email..."
-            className="border border-[#E2E1E1] rounded-lg px-3 py-2 text-sm w-full md:w-80 bg-white placeholder:text-[#9FA4AF] focus:outline-none focus:ring-2 focus:ring-[#D7953F]/50"
+            value={searchCompany}
+            onChange={(e) => setSearchCompany(e.target.value)}
+            placeholder="Search by company..."
+            className="border border-[#E2E1E1] rounded-lg px-3 py-2 text-sm w-full md:w-56 bg-white placeholder:text-[#9FA4AF] focus:outline-none focus:ring-2 focus:ring-[#D7953F]/50"
+          />
+          <input
+            value={searchContact}
+            onChange={(e) => setSearchContact(e.target.value)}
+            placeholder="Search by name or email..."
+            className="border border-[#E2E1E1] rounded-lg px-3 py-2 text-sm w-full md:w-56 bg-white placeholder:text-[#9FA4AF] focus:outline-none focus:ring-2 focus:ring-[#D7953F]/50"
           />
         </div>
       </div>
@@ -240,24 +246,39 @@ export default function QuotesDashboard({
         <div>
           <div className="overflow-x-auto border border-[#E2E1E1] rounded-lg bg-white shadow-sm">
             <table className="w-full text-sm">
-              <thead className="bg-[#EDEDED] text-left sticky top-0">
+              <thead className=" text-left sticky top-0">
                 <tr className="text-[#5F6678]">
                   <th className="px-2 py-2 font-medium text-center">Company</th>
-                  <th className="px-2 py-2 font-medium text-center">Representative</th>
-                  <th className="px-2 py-2 font-medium text-center">Contact</th>
+                  <th className="px-2 py-2 font-medium text-center">
+                    Representative
+                  </th>
+                  <th className="px-2 py-2 font-medium text-center">Email</th>
+                  <th className="px-2 py-2 font-medium text-center">Phone</th>
                   <th className="px-2 py-2 font-medium text-center">
                     Crane Type
                   </th>
+                  <th className="px-2 py-2 font-medium text-center">Model</th>
                   <th className="px-2 py-2 font-medium text-center">
-                    Description
+                    Location
                   </th>
                   <th className="px-2 py-2 font-medium text-center">
-                    Capacity
+                    Work Type
                   </th>
-                  <th className="px-2 py-2 font-medium text-center">Dates</th>
+                  <th className="px-2 py-2 font-medium text-center">
+                    Capacity Needed
+                  </th>
+                  <th className="px-2 py-2 font-medium text-center">
+                    Preferred Mfr
+                  </th>
+                  <th className="px-2 py-2 font-medium text-center">
+                    Start Date
+                  </th>
+                  <th className="px-2 py-2 font-medium text-center">
+                    End Date
+                  </th>
+                  <th className="px-2 py-2 font-medium text-center">Created</th>
+                  <th className="px-2 py-2 font-medium text-center">Notes</th>
                   <th className="px-2 py-2 font-medium text-center">Status</th>
-                  <th className="px-3 py-2"></th>
-                  <th className="px-3 py-2"></th>
                 </tr>
               </thead>
               <tbody>
@@ -280,24 +301,45 @@ export default function QuotesDashboard({
                     >
                       {q.company}
                     </td>
-                    <td
-                      className="px-3 py-2 text-center cursor-pointer text-[#172A4F]"
-                    >
+                    <td className="px-3 py-2 text-center text-[#172A4F]">
                       {q.contact_name}
                     </td>
+                    <td className="px-3 py-2 text-center text-[#5F6678]">
+                      {q.email}
+                    </td>
+                    <td className="px-3 py-2 text-center">{q.phone || "—"}</td>
                     <td className="px-3 py-2 text-center">
-                      {/* {q.contact_name} <span className="text-[#9FA4AF]">/</span>{" "} */}
-                      <span className="text-[#5F6678]">{q.email}</span>
+                      {q.category_id?.toUpperCase() || "—"}
                     </td>
                     <td className="px-3 py-2 text-center">
-                      {q.category_id || "—"}
+                      {q.model_id?.toUpperCase() || "—"}
                     </td>
-                    <td className="px-3 py-2 text-center">{q.notes || "—"}</td>
+                    <td className="px-3 py-2 text-center">
+                      {q.location || "—"}
+                    </td>
+                    <td className="px-3 py-2 text-center">
+                      {q.work_type || "—"}
+                    </td>
                     <td className="px-3 py-2 text-center">
                       {q.capacity_needed || "—"}
                     </td>
+                    <td className="px-3 py-2 text-center">
+                      {q.preferred_manufacturer || "—"}
+                    </td>
                     <td className="px-3 py-2 text-center whitespace-nowrap">
-                      {fmtDate(q.start_date)} → {fmtDate(q.end_date)}
+                      {fmtDate(q.start_date)}
+                    </td>
+                    <td className="px-3 py-2 text-center whitespace-nowrap">
+                      {fmtDate(q.end_date)}
+                    </td>
+                    <td className="px-3 py-2 text-center whitespace-nowrap">
+                      {fmtDate(q.created_at)}
+                    </td>
+                    <td
+                      className="px-3 py-2 text-center max-w-[240px] truncate"
+                      title={q.notes || undefined}
+                    >
+                      {q.notes || "—"}
                     </td>
                     <td className="px-3 py-2 text-center">
                       <div className="flex items-center gap-2 justify-center">
@@ -319,7 +361,7 @@ export default function QuotesDashboard({
                     </td>
                     <td className="px-3 py-2 text-right">
                       <div className="flex justify-end gap-2">
-                        <button
+                        {/* <button
                           className="text-xs px-3 py-1.5 rounded-md bg-[#172A4F] text-white hover:opacity-90 transition"
                           onClick={(e) => {
                             e.stopPropagation();
@@ -328,7 +370,7 @@ export default function QuotesDashboard({
                           }}
                         >
                           Details
-                        </button>
+                        </button> */}
                         <button
                           className="text-xs px-3 py-1.5 rounded-md bg-[#D7953F] text-white hover:opacity-90 transition"
                           onClick={(e) => {
@@ -372,166 +414,22 @@ export default function QuotesDashboard({
 
       {/* Details Modal */}
       {showDetailsModal && selected && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-40 flex items-start md:items-center justify-center px-4 py-10"
-        >
-          <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-            onClick={() => setShowDetailsModal(false)}
-          />
-          <div className="relative w-full max-w-lg bg-white rounded-xl shadow-lg border border-[#E2E1E1] p-6 space-y-3 animate-fadeIn">
-            <div className="flex justify-between items-start mb-1">
-              <h3 className="text-lg font-semibold text-[#172A4F]">
-                Quote Details
-              </h3>
-              <button
-                onClick={() => setShowDetailsModal(false)}
-                aria-label="Close details"
-                className="text-[#5F6678] hover:text-[#172A4F]"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
-              <div className="text-[#9FA4AF]">Quote ID</div>
-              <div className="font-mono text-[11px]">{selected.id}</div>
-              <div className="text-[#9FA4AF]">Received</div>
-              <div>{fmtDate(selected.created_at)}</div>
-              <div className="text-[#9FA4AF]">Company</div>
-              <div>{selected.company}</div>
-              <div className="text-[#9FA4AF]">Contact</div>
-              <div>
-                {selected.contact_name} / {selected.email}
-              </div>
-              <div className="text-[#9FA4AF]">Phone</div>
-              <div>{selected.phone || "—"}</div>
-              <div className="text-[#9FA4AF]">Location</div>
-              <div>{selected.location || "—"}</div>
-              <div className="text-[#9FA4AF]">Work Type</div>
-              <div>{selected.work_type || "—"}</div>
-              <div className="text-[#9FA4AF]">Category</div>
-              <div>{selected.category_id || "—"}</div>
-              <div className="text-[#9FA4AF]">Model</div>
-              <div>{selected.model_id || "—"}</div>
-              <div className="text-[#9FA4AF]">Capacity Needed</div>
-              <div>{selected.capacity_needed || "—"}</div>
-              <div className="text-[#9FA4AF]">Dates</div>
-              <div>
-                {fmtDate(selected.start_date)} → {fmtDate(selected.end_date)}
-              </div>
-              <div className="text-[#9FA4AF]">Preferred Mfr</div>
-              <div>{selected.preferred_manufacturer || "—"}</div>
-            </div>
-            <div className="text-xs mt-2">
-              <div className="text-[#9FA4AF] mb-1">Notes</div>
-              <div className="whitespace-pre-wrap border rounded p-2 bg-[#F8F8F8] max-h-40 overflow-auto">
-                {selected.notes || "—"}
-              </div>
-            </div>
-            <div className="flex justify-end gap-3 pt-2">
-              <button
-                className="text-xs px-3 py-1.5 rounded-md bg-[#172A4F] text-white hover:opacity-90 transition"
-                onClick={() => {
-                  setShowDetailsModal(false);
-                  setShowReplyModal(true);
-                }}
-              >
-                Reply
-              </button>
-              <button
-                className="text-xs px-3 py-1.5 rounded-md bg-[#D7953F] text-white hover:opacity-90 transition"
-                onClick={() => setShowDetailsModal(false)}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
+        <DetailsModal
+          quote={selected}
+          onClose={() => setShowDetailsModal(false)}
+          onReply={() => setShowReplyModal(true)}
+        />
       )}
 
       {/* Reply Modal */}
       {showReplyModal && selected && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 flex items-start md:items-center justify-center px-4 py-10"
-        >
-          <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={() => setShowReplyModal(false)}
-          />
-          <div className="relative w-full max-w-lg bg-white rounded-xl shadow-lg border border-[#E2E1E1] p-6 space-y-4 animate-fadeIn">
-            <div className="flex justify-between items-start">
-              <h3 className="text-lg font-semibold text-[#172A4F]">
-                Reply to {selected.contact_name}
-              </h3>
-              <button
-                onClick={() => setShowReplyModal(false)}
-                aria-label="Close reply"
-                className="text-[#5F6678] hover:text-[#172A4F]"
-              >
-                ✕
-              </button>
-            </div>
-            <form
-              className="space-y-3"
-              onSubmit={(e) => {
-                e.preventDefault();
-                sendReply(e.currentTarget);
-              }}
-            >
-              <input
-                ref={replyFirstFieldRef}
-                name="subject"
-                defaultValue={`Re: Quote Request – ${selected.company}`}
-                className="w-full border border-[#E2E1E1] rounded px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D7953F]/50"
-                required
-              />
-              <textarea
-                name="message"
-                rows={8}
-                className="w-full border border-[#E2E1E1] rounded px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D7953F]/50"
-                required
-                placeholder={`Hi ${selected.contact_name},\n\nThanks for your request. Here's our initial feedback...\n\nBest regards,\nDlift Team`}
-              />
-              <div className="flex gap-2 justify-end">
-                <button
-                  type="button"
-                  className="text-[#5F6678] text-xs hover:text-[#172A4F]"
-                  onClick={() => setShowReplyModal(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  disabled={sending}
-                  className="bg-[#D7953F] text-white text-xs px-3 py-1.5 rounded hover:opacity-90 transition disabled:opacity-60"
-                  type="submit"
-                >
-                  {sending ? "Sending…" : "Send"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <ReplyModal
+          quote={selected}
+          sending={sending}
+          onClose={() => setShowReplyModal(false)}
+          onSubmit={sendReply}
+        />
       )}
-
-      <style jsx>{`
-        .animate-fadeIn {
-          animation: fadeIn 0.25s ease;
-        }
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(8px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
     </div>
   );
 }
