@@ -98,7 +98,7 @@ export async function updateCrane(
 ): Promise<CraneRow> {
   // Remove id from updates to avoid conflicts
   const { id: _, ...updateFields } = updates;
-  
+
   const { data, error } = await supabase
     .from("cranes")
     .update(updateFields)
@@ -119,40 +119,22 @@ export async function uploadCraneImage(
   craneId: string,
   categoryId: string
 ): Promise<string> {
-  // Create a clean filename: categoryId-craneId.extension
-  const fileExt = file.name.split(".").pop()?.toLowerCase() || "jpg";
-  const fileName = `${craneId}.${fileExt}`;
-  const filePath = `${categoryId}/${fileName}`;
+  // Route through a server-side API so the upload uses authenticated server client
+  const fd = new FormData();
+  fd.append("file", file);
+  fd.append("craneId", craneId);
+  fd.append("categoryId", categoryId);
 
-  // Create a new File object with the renamed filename
-  const renamedFile = new File([file], fileName, {
-    type: file.type,
-    lastModified: file.lastModified,
+  const res = await fetch("/api/admin/storage/upload", {
+    method: "POST",
+    body: fd,
   });
-
-  // First, try to remove any existing file at this path
-  try {
-    await supabase.storage.from("cranes").remove([filePath]);
-  } catch (e) {
-    // Ignore errors if file doesn't exist
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body?.error || `Upload failed with status ${res.status}`);
   }
-
-  // Upload to Supabase Storage
-  const { error: uploadError } = await supabase.storage
-    .from("cranes")
-    .upload(filePath, renamedFile, {
-      cacheControl: "3600",
-      upsert: true, // Overwrite if exists
-    });
-
-  if (uploadError) throw uploadError;
-
-  // Return the public URL
-  const {
-    data: { publicUrl },
-  } = supabase.storage.from("cranes").getPublicUrl(filePath);
-
-  return publicUrl;
+  const json = await res.json();
+  return json.publicUrl as string;
 }
 
 export async function deleteCraneImage(imageUrl: string): Promise<void> {
