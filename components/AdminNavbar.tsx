@@ -19,6 +19,7 @@ export default function AdminNavbar() {
         <nav className="hidden sm:flex gap-4 text-sm">
           <Link className="hover:text-[#D7953F] transition-colors" href="/">Home</Link>
           <Link className="hover:text-[#D7953F] transition-colors" href="/admin/quotes">Quotes</Link>
+          <Link className="hover:text-[#D7953F] transition-colors" href="/admin/cranes">Cranes</Link>
         </nav>
       </div>
       <form action="/api/admin/logout" method="post">

@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { sendQuoteReply, updateQuoteStatus } from '@/lib/quotesService';
+import { sendQuoteReply, updateQuoteStatus } from "@/lib/quotesService";
 import type { QuoteRequestRow, QuoteStatus } from "@/constants/types";
 
 type Quote = QuoteRequestRow;
@@ -13,7 +13,8 @@ export default function QuotesDashboard({
 }) {
   const [quotes, setQuotes] = useState<Quote[]>(initialQuotes);
   const [selected, setSelected] = useState<Quote | null>(null);
-  const [showReply, setShowReply] = useState(false);
+  const [showReplyModal, setShowReplyModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [sending, setSending] = useState(false);
   const [filter, setFilter] = useState<"all" | QuoteStatus>("all");
   const [search, setSearch] = useState("");
@@ -57,10 +58,16 @@ export default function QuotesDashboard({
   function updateStatus(id: string, status: QuoteStatus) {
     const prev = quotes;
     setQuotes((q) => q.map((r) => (r.id === id ? { ...r, status } : r)));
-    console.log("STATUS CHANGIN TO: ---->",status);
+    console.log("STATUS CHANGIN TO: ---->", status);
     updateQuoteStatus(id, status)
-      .then(() => flash('success', 'Status updated'))
-      .catch((e: any) => { setQuotes(prev); flash('error', e?.response?.data?.error || e?.message || 'Failed to update status'); });
+      .then(() => flash("success", "Status updated"))
+      .catch((e: any) => {
+        setQuotes(prev);
+        flash(
+          "error",
+          e?.response?.data?.error || e?.message || "Failed to update status"
+        );
+      });
   }
 
   async function sendReply(form: HTMLFormElement) {
@@ -72,11 +79,14 @@ export default function QuotesDashboard({
     try {
       await sendQuoteReply(selected.id, String(subject), String(message));
       setSending(false);
-      setShowReply(false);
-      flash('success', 'Reply sent');
+      setShowReplyModal(false);
+      flash("success", "Reply sent");
     } catch (e: any) {
       setSending(false);
-      flash('error', e?.response?.data?.error || e?.message || 'Failed to send');
+      flash(
+        "error",
+        e?.response?.data?.error || e?.message || "Failed to send"
+      );
     }
   }
 
@@ -126,7 +136,7 @@ export default function QuotesDashboard({
           map[value] || "bg-gray-100 text-gray-700"
         }`}
       >
-        {value.replace("_"," ")}
+        {value.replace("_", " ")}
       </span>
     );
   }
@@ -140,8 +150,28 @@ export default function QuotesDashboard({
     }
   }
 
+  // Accessibility: close modals with ESC
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setShowDetailsModal(false);
+        setShowReplyModal(false);
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Focus management for reply modal
+  const replyFirstFieldRef = useRef<HTMLInputElement | null>(null);
+  useEffect(() => {
+    if (showReplyModal && replyFirstFieldRef.current) {
+      replyFirstFieldRef.current.focus();
+    }
+  }, [showReplyModal]);
+
   return (
-    <div className="space-y-6 py-8 px-5">
+    <div className="space-y-6 py-8 px-5 relative">
       {/* Top bar */}
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
@@ -206,13 +236,14 @@ export default function QuotesDashboard({
       </div>
 
       {/* Main content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 gap-6">
+        <div>
           <div className="overflow-x-auto border border-[#E2E1E1] rounded-lg bg-white shadow-sm">
             <table className="w-full text-sm">
               <thead className="bg-[#EDEDED] text-left sticky top-0">
                 <tr className="text-[#5F6678]">
                   <th className="px-2 py-2 font-medium text-center">Company</th>
+                  <th className="px-2 py-2 font-medium text-center">Representative</th>
                   <th className="px-2 py-2 font-medium text-center">Contact</th>
                   <th className="px-2 py-2 font-medium text-center">
                     Crane Type
@@ -233,18 +264,29 @@ export default function QuotesDashboard({
                 {filtered.map((q) => (
                   <tr
                     key={q.id}
-                    className="border-t border-[#E2E1E1] hover:bg-[#9FA4AF]/10"
+                    className="border-t border-[#E2E1E1] hover:bg-[#9FA4AF]/10 cursor-pointer"
+                    onClick={() => {
+                      setSelected(q);
+                      setShowDetailsModal(true);
+                    }}
                   >
                     <td
                       className="px-3 py-2 text-center cursor-pointer text-[#172A4F]"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setSelected(q);
+                        setShowDetailsModal(true);
                       }}
                     >
                       {q.company}
                     </td>
+                    <td
+                      className="px-3 py-2 text-center cursor-pointer text-[#172A4F]"
+                    >
+                      {q.contact_name}
+                    </td>
                     <td className="px-3 py-2 text-center">
-                      {q.contact_name} <span className="text-[#9FA4AF]">/</span>{" "}
+                      {/* {q.contact_name} <span className="text-[#9FA4AF]">/</span>{" "} */}
                       <span className="text-[#5F6678]">{q.email}</span>
                     </td>
                     <td className="px-3 py-2 text-center">
@@ -258,45 +300,48 @@ export default function QuotesDashboard({
                       {fmtDate(q.start_date)} → {fmtDate(q.end_date)}
                     </td>
                     <td className="px-3 py-2 text-center">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 justify-center">
                         <StatusPill value={q.status} />
-                        <select
+                        {/* <select
                           className="text-xs border border-[#E2E1E1] rounded px-1 py-0.5 bg-white"
                           value={q.status}
                           onChange={(e) =>{
                             console.log(e.target.value);
                             
-                            updateStatus(q.id, e.target.value as QuoteStatus)
+                            // updateStatus(q.id, e.target.value as QuoteStatus)
                           }}
                         >
                           <option value="new">new</option>
                           <option value="in_review">in review</option>
                           <option value="closed">closed</option>
-                        </select>
+                        </select> */}
                       </div>
                     </td>
                     <td className="px-3 py-2 text-right">
-                      <button
-                        className="text-xs px-3 py-1.5 rounded-md bg-[#D7953F] text-white hover:opacity-90 transition"
-                        onClick={() => {
-                          setSelected(q);
-                          setShowReply(false);
-                        }}
-                      >
-                        Select
-                      </button>
+                      <div className="flex justify-end gap-2">
+                        <button
+                          className="text-xs px-3 py-1.5 rounded-md bg-[#172A4F] text-white hover:opacity-90 transition"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelected(q);
+                            setShowDetailsModal(true);
+                          }}
+                        >
+                          Details
+                        </button>
+                        <button
+                          className="text-xs px-3 py-1.5 rounded-md bg-[#D7953F] text-white hover:opacity-90 transition"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelected(q);
+                            setShowReplyModal(true);
+                          }}
+                        >
+                          Reply
+                        </button>
+                      </div>
                     </td>
-                    <td className="px-3 py-2 text-right">
-                      <button
-                        className="text-xs px-3 py-1.5 rounded-md bg-[#D7953F] text-white hover:opacity-90 transition"
-                        onClick={() => {
-                          setSelected(q);
-                          setShowReply(true);
-                        }}
-                      >
-                        Reply
-                      </button>
-                    </td>
+                    <td className="px-3 py-2" />
                   </tr>
                 ))}
                 {filtered.length === 0 && (
@@ -309,124 +354,6 @@ export default function QuotesDashboard({
               </tbody>
             </table>
           </div>
-        </div>
-
-        {/* Right column */}
-        <div className="space-y-4">
-          <div className="border border-[#E2E1E1] rounded-lg p-4 bg-white shadow-sm">
-            <h3 className="font-medium mb-2 text-[#172A4F]">Details</h3>
-            {selected ? (
-              <div className="text-xs space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="text-[#9FA4AF]">Quote ID</div>
-                  <div className="font-mono text-[11px]">{selected.id}</div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="text-[#9FA4AF]">Received</div>
-                  <div>{fmtDate(selected.created_at)}</div>
-                </div>
-                <hr className="my-2" />
-                <p>
-                  <b className="text-[#172A4F]">Company:</b> {selected.company}
-                </p>
-                <p>
-                  <b className="text-[#172A4F]">Contact:</b>{" "}
-                  {selected.contact_name} / {selected.email}
-                </p>
-                <p>
-                  <b className="text-[#172A4F]">Phone:</b>{" "}
-                  {selected.phone || "—"}
-                </p>
-                <p>
-                  <b className="text-[#172A4F]">Location:</b>{" "}
-                  {selected.location || "—"}
-                </p>
-                <p>
-                  <b className="text-[#172A4F]">Work Type:</b>{" "}
-                  {selected.work_type || "—"}
-                </p>
-                <p>
-                  <b className="text-[#172A4F]">Category:</b>{" "}
-                  {selected.category_id || "—"}
-                </p>
-                <p>
-                  <b className="text-[#172A4F]">Model:</b>{" "}
-                  {selected.model_id || "—"}
-                </p>
-                <p>
-                  <b className="text-[#172A4F]">Capacity:</b>{" "}
-                  {selected.capacity_needed || "—"}
-                </p>
-                <p>
-                  <b className="text-[#172A4F]">Dates:</b>{" "}
-                  {fmtDate(selected.start_date)} → {fmtDate(selected.end_date)}
-                </p>
-                <p>
-                  <b className="text-[#172A4F]">Preferred Manufacturer:</b>{" "}
-                  {selected.preferred_manufacturer || "—"}
-                </p>
-                <div>
-                  <div className="text-[#9FA4AF]">Notes</div>
-                  <div className="whitespace-pre-wrap">
-                    {selected.notes || "—"}
-                  </div>
-                </div>
-                <button
-                  className="mt-2 px-3 py-1.5 rounded-md bg-[#D7953F] text-white hover:opacity-90 transition"
-                  onClick={() => setShowReply(true)}
-                >
-                  Reply
-                </button>
-              </div>
-            ) : (
-              <p className="text-gray-500 text-xs">Select a quote…</p>
-            )}
-          </div>
-
-          {showReply && selected && (
-            <div className="border border-[#E2E1E1] rounded-lg p-4 bg-white shadow-sm">
-              <h3 className="font-medium mb-2 text-sm text-[#172A4F]">
-                Reply to {selected.contact_name}
-              </h3>
-              <form
-                className="space-y-2"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  sendReply(e.currentTarget);
-                }}
-              >
-                <input
-                  name="subject"
-                  defaultValue={`Re: Quote Request – ${selected.company}`}
-                  className="w-full border border-[#E2E1E1] rounded px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D7953F]/50"
-                  required
-                />
-                <textarea
-                  name="message"
-                  rows={8}
-                  className="w-full border border-[#E2E1E1] rounded px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D7953F]/50"
-                  required
-                  placeholder={`Hi ${selected.contact_name},\n\nThanks for your request. Here's our initial feedback...\n\nBest regards,\nDlift Team`}
-                />
-                <div className="flex gap-2 justify-end">
-                  <button
-                    type="button"
-                    className="text-[#5F6678] text-xs hover:text-[#172A4F]"
-                    onClick={() => setShowReply(false)}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    disabled={sending}
-                    className="bg-[#D7953F] text-white text-xs px-3 py-1.5 rounded hover:opacity-90 transition disabled:opacity-60"
-                    type="submit"
-                  >
-                    {sending ? "Sending..." : "Send"}
-                  </button>
-                </div>
-              </form>
-            </div>
-          )}
         </div>
       </div>
 
@@ -442,6 +369,169 @@ export default function QuotesDashboard({
           {toast.msg}
         </div>
       )}
+
+      {/* Details Modal */}
+      {showDetailsModal && selected && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-40 flex items-start md:items-center justify-center px-4 py-10"
+        >
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => setShowDetailsModal(false)}
+          />
+          <div className="relative w-full max-w-lg bg-white rounded-xl shadow-lg border border-[#E2E1E1] p-6 space-y-3 animate-fadeIn">
+            <div className="flex justify-between items-start mb-1">
+              <h3 className="text-lg font-semibold text-[#172A4F]">
+                Quote Details
+              </h3>
+              <button
+                onClick={() => setShowDetailsModal(false)}
+                aria-label="Close details"
+                className="text-[#5F6678] hover:text-[#172A4F]"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
+              <div className="text-[#9FA4AF]">Quote ID</div>
+              <div className="font-mono text-[11px]">{selected.id}</div>
+              <div className="text-[#9FA4AF]">Received</div>
+              <div>{fmtDate(selected.created_at)}</div>
+              <div className="text-[#9FA4AF]">Company</div>
+              <div>{selected.company}</div>
+              <div className="text-[#9FA4AF]">Contact</div>
+              <div>
+                {selected.contact_name} / {selected.email}
+              </div>
+              <div className="text-[#9FA4AF]">Phone</div>
+              <div>{selected.phone || "—"}</div>
+              <div className="text-[#9FA4AF]">Location</div>
+              <div>{selected.location || "—"}</div>
+              <div className="text-[#9FA4AF]">Work Type</div>
+              <div>{selected.work_type || "—"}</div>
+              <div className="text-[#9FA4AF]">Category</div>
+              <div>{selected.category_id || "—"}</div>
+              <div className="text-[#9FA4AF]">Model</div>
+              <div>{selected.model_id || "—"}</div>
+              <div className="text-[#9FA4AF]">Capacity Needed</div>
+              <div>{selected.capacity_needed || "—"}</div>
+              <div className="text-[#9FA4AF]">Dates</div>
+              <div>
+                {fmtDate(selected.start_date)} → {fmtDate(selected.end_date)}
+              </div>
+              <div className="text-[#9FA4AF]">Preferred Mfr</div>
+              <div>{selected.preferred_manufacturer || "—"}</div>
+            </div>
+            <div className="text-xs mt-2">
+              <div className="text-[#9FA4AF] mb-1">Notes</div>
+              <div className="whitespace-pre-wrap border rounded p-2 bg-[#F8F8F8] max-h-40 overflow-auto">
+                {selected.notes || "—"}
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                className="text-xs px-3 py-1.5 rounded-md bg-[#172A4F] text-white hover:opacity-90 transition"
+                onClick={() => {
+                  setShowDetailsModal(false);
+                  setShowReplyModal(true);
+                }}
+              >
+                Reply
+              </button>
+              <button
+                className="text-xs px-3 py-1.5 rounded-md bg-[#D7953F] text-white hover:opacity-90 transition"
+                onClick={() => setShowDetailsModal(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reply Modal */}
+      {showReplyModal && selected && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-start md:items-center justify-center px-4 py-10"
+        >
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowReplyModal(false)}
+          />
+          <div className="relative w-full max-w-lg bg-white rounded-xl shadow-lg border border-[#E2E1E1] p-6 space-y-4 animate-fadeIn">
+            <div className="flex justify-between items-start">
+              <h3 className="text-lg font-semibold text-[#172A4F]">
+                Reply to {selected.contact_name}
+              </h3>
+              <button
+                onClick={() => setShowReplyModal(false)}
+                aria-label="Close reply"
+                className="text-[#5F6678] hover:text-[#172A4F]"
+              >
+                ✕
+              </button>
+            </div>
+            <form
+              className="space-y-3"
+              onSubmit={(e) => {
+                e.preventDefault();
+                sendReply(e.currentTarget);
+              }}
+            >
+              <input
+                ref={replyFirstFieldRef}
+                name="subject"
+                defaultValue={`Re: Quote Request – ${selected.company}`}
+                className="w-full border border-[#E2E1E1] rounded px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D7953F]/50"
+                required
+              />
+              <textarea
+                name="message"
+                rows={8}
+                className="w-full border border-[#E2E1E1] rounded px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D7953F]/50"
+                required
+                placeholder={`Hi ${selected.contact_name},\n\nThanks for your request. Here's our initial feedback...\n\nBest regards,\nDlift Team`}
+              />
+              <div className="flex gap-2 justify-end">
+                <button
+                  type="button"
+                  className="text-[#5F6678] text-xs hover:text-[#172A4F]"
+                  onClick={() => setShowReplyModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  disabled={sending}
+                  className="bg-[#D7953F] text-white text-xs px-3 py-1.5 rounded hover:opacity-90 transition disabled:opacity-60"
+                  type="submit"
+                >
+                  {sending ? "Sending…" : "Send"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <style jsx>{`
+        .animate-fadeIn {
+          animation: fadeIn 0.25s ease;
+        }
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 }
