@@ -53,8 +53,8 @@ export default function CraneCategories() {
     <div id="categories" className="space-y-0">
       {categories.map((category, index) => (
         <div key={category.id}>
-          <DesktopCraneCard category={category as any} index={index} />
-          <MobileCraneCard category={category as any} />
+          <DesktopCraneCard category={category} index={index} />
+          <MobileCraneCard category={category} />
         </div>
       ))}
     </div>
