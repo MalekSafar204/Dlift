@@ -2,7 +2,7 @@ Add animation to mobile menu    <DONE>
 Add about page 			<DONE>
 Add contact page 		<DONE>
 Add crane details to frontend 	<DONE>
-admin Add crane functionality 
+admin Add crane functionality 	<DONE>
 Make admin table bigger 	<DONE>	
 Make reply and details modal	<DONE>
 W mission and vision fe about	<DONE>

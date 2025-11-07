@@ -72,8 +72,27 @@ export default function AddCraneModal({
     setSaving(true);
 
     try {
-      // Create the crane first to get the ID
-      const newCrane = await createCrane(formData);
+      // Derive deterministic crane id: `${category_id}-${normalized name}`
+      const cat = String(formData.category_id);
+      const rawName = String(formData.name || "");
+      const normalizedName = rawName
+        .trim()
+        // separate letter-digit and digit-letter boundaries with hyphens
+        .replace(/([A-Za-z])([0-9])/g, "$1-$2")
+        .replace(/([0-9])([A-Za-z])/g, "$1-$2")
+        // normalize spaces/underscores and any non-alphanumerics to hyphen
+        .replace(/[_\s]+/g, "-")
+        .replace(/[^A-Za-z0-9-]+/g, "-")
+        // collapse multiple hyphens and trim
+        .replace(/-+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .toLowerCase();
+
+      const id = `${cat}-${normalizedName}`;
+
+      // Create the crane with our custom id
+      let payload: Partial<CraneRow> = { id, ...formData };
+      const newCrane = await createCrane(payload);
 
       // Upload image if provided
       if (imageFile) {

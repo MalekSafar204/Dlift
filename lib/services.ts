@@ -83,6 +83,7 @@ export async function getCranes(): Promise<CraneRow[]> {
 export async function createCrane(
   craneData: Partial<CraneRow>
 ): Promise<CraneRow> {
+  console.log("Creating crane:", craneData);
   const { data, error } = await supabase
     .from("cranes")
     .insert([craneData])
