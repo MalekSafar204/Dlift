@@ -29,7 +29,10 @@ export default function CraneModels({ cranes }: CraneModelsProps) {
               {/* Crane Image */}
               <div className="md:w-1/3 relative w-full h-96 bg-gradient-to-br from-gray-200 to-gray-300 flex-shrink-0">
                 <Image
-                  src={crane.image}
+                  // src={crane.image}
+                  src={
+                    "https://cgbanfottrxxbyoeuegk.supabase.co/storage/v1/object/public/cranes/atc/ac-100.jpg"
+                  }
                   fill
                   priority
                   sizes="100vw"
@@ -48,6 +51,39 @@ export default function CraneModels({ cranes }: CraneModelsProps) {
                     <span className="text-gray-600 font-medium">Capacity:</span>
                     <span className="text-gray-900 font-semibold">
                       {crane.capacity}
+                      {crane.capacityTon ? ` (${crane.capacityTon}t)` : ""}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between py-2 text-sm">
+                    <span className="text-gray-600 font-medium">
+                      Main boom:
+                    </span>
+                    <span className="text-gray-900 font-semibold">
+                      {crane.mainBoomMinM ?? "-"}
+                      {crane.mainBoomMaxM ? `–${crane.mainBoomMaxM}` : ""} m
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between py-2 text-sm">
+                    <span className="text-gray-600 font-medium">
+                      Max hoist height:
+                    </span>
+                    <span className="text-gray-900 font-semibold">
+                      {crane.maxHoistHeightM ?? "-"} m
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between py-2 text-sm">
+                    <span className="text-gray-600 font-medium">Jib type:</span>
+                    <span className="text-gray-900 font-semibold">
+                      {crane.jibType ?? "-"}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between py-2 text-sm">
+                    <span className="text-gray-600 font-medium">
+                      Jib length:
+                    </span>
+                    <span className="text-gray-900 font-semibold">
+                      {crane.jibMinM ?? "-"}
+                      {crane.jibMaxM ? `–${crane.jibMaxM}` : ""} m
                     </span>
                   </div>
                   <div className="flex items-center justify-between py-2 text-sm">
@@ -69,7 +105,10 @@ export default function CraneModels({ cranes }: CraneModelsProps) {
                   <span className="font-semibold">Description: </span>
                   {crane.description}
                 </div>
-                <Link href={`/quote?model=${crane.id}`} className="self-start mt-1 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-md shadow-sm transition-colors duration-200">
+                <Link
+                  href={`/quote?model=${crane.id}`}
+                  className="self-start mt-1 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-md shadow-sm transition-colors duration-200"
+                >
                   Get a Quote
                 </Link>
               </div>

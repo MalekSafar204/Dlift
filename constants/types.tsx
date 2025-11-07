@@ -49,6 +49,16 @@ export interface CraneRow {
   manufacturer: string | null;
   image_url: string | null;
   description: string | null;
+  spec_category_text?: string | null;
+  spec_main_boom_min_m?: number | null;
+  spec_main_boom_max_m?: number | null;
+  spec_max_hoist_height_m?: number | null;
+  spec_jib_type?: string | null;
+  spec_jib_min_m?: number | null;
+  spec_jib_max_m?: number | null;
+  spec_source?: string | null;
+  spec_raw?: unknown | null;
+  image_key?: string | null;
 }
 
 // UI-layer types used across multiple components
@@ -69,6 +79,15 @@ export interface UiCrane {
   manufacturer: string;
   image: string;
   description: string;
+  // Extended spec fields (optional in UI)
+  specCategoryText?: string | null;
+  mainBoomMinM?: number | null;
+  mainBoomMaxM?: number | null;
+  maxHoistHeightM?: number | null;
+  jibType?: string | null;
+  jibMinM?: number | null;
+  jibMaxM?: number | null;
+  capacityTon?: number | null; // normalized numeric capacity
 }
 
 // API payloads
@@ -82,14 +101,14 @@ export type QuoteRequestPayload = {
   workType: string;
   location: string;
   startDate: string; // yyyy-mm-dd
-  endDate: string;   // yyyy-mm-dd
+  endDate: string; // yyyy-mm-dd
   capacityNeeded?: string; // Used by custom request variant
   preferredManufacturer?: string | null;
   notes?: string | null;
 };
 
 // Quote requests (Supabase table: quote_requests)
-export type QuoteStatus = 'new' | 'in_review' | 'closed';
+export type QuoteStatus = "new" | "in_review" | "closed";
 
 // Row as stored in the DB
 export interface QuoteRequestRow {
@@ -103,7 +122,7 @@ export interface QuoteRequestRow {
   work_type: string | null;
   location: string | null;
   start_date: string | null; // date (yyyy-mm-dd)
-  end_date: string | null;   // date (yyyy-mm-dd)
+  end_date: string | null; // date (yyyy-mm-dd)
   capacity_needed: string | null;
   preferred_manufacturer: string | null;
   notes: string | null;

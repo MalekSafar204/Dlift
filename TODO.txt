@@ -1,0 +1,9 @@
+Add animation to mobile menu    <DONE>
+Add about page 			<DONE>
+Add contact page 		<DONE>
+Add crane details to frontend 	
+Add crane functionality 
+Make admin table bigger 
+Make reply and details appear in a modal
+W mission and vision fe about
+remove craneCategories json data
