@@ -1,8 +1,7 @@
-import { NextResponse } from 'next/server';
-import { z } from 'zod';
-import { createQuoteServer } from '@/lib/quotesService';
-import { sendQuoteEmails } from '@/lib/email';
-
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { createQuoteServer } from "@/lib/quotesServiceServer";
+import { sendQuoteEmails } from "@/lib/email";
 
 const QuoteSchema = z.object({
   categoryId: z.string().min(1),
@@ -26,7 +25,8 @@ export async function POST(req: Request) {
     const data = QuoteSchema.parse(json);
 
     // Derive a non-null capacity string fallback if none provided
-    const capacityFallback = (data.capacityNeeded && data.capacityNeeded.trim()) || 'unspecified';
+    const capacityFallback =
+      (data.capacityNeeded && data.capacityNeeded.trim()) || "unspecified";
 
     const inserted = await createQuoteServer({
       category_id: data.categoryId,
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       capacity_needed: capacityFallback,
       preferred_manufacturer: data.preferredManufacturer ?? null,
       notes: data.notes ?? null,
-      status: 'new',
+      status: "new",
     });
 
     // Non-blocking notifications
@@ -50,6 +50,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ id: inserted.id }, { status: 201 });
   } catch (err: any) {
-    return NextResponse.json({ error: err?.message ?? 'Invalid payload' }, { status: 400 });
+    return NextResponse.json(
+      { error: err?.message ?? "Invalid payload" },
+      { status: 400 }
+    );
   }
 }

@@ -1,6 +1,5 @@
-import { listQuotes } from '@/lib/quotesService';
-import QuotesDashboard from './quotesDashboard';
-
+import { listQuotes } from "@/lib/quotesServiceServer";
+import QuotesDashboard from "./quotesDashboard";
 
 export const revalidate = 0;
 
