@@ -79,3 +79,91 @@ export async function getCranes(): Promise<CraneRow[]> {
   if (error) throw error;
   return (data ?? []) as CraneRow[];
 }
+
+export async function createCrane(
+  craneData: Partial<CraneRow>
+): Promise<CraneRow> {
+  const { data, error } = await supabase
+    .from("cranes")
+    .insert([craneData])
+    .select()
+    .single();
+  if (error) throw error;
+  return data as CraneRow;
+}
+
+export async function updateCrane(
+  id: string,
+  updates: Partial<CraneRow>
+): Promise<CraneRow> {
+  // Remove id from updates to avoid conflicts
+  const { id: _, ...updateFields } = updates;
+  
+  const { data, error } = await supabase
+    .from("cranes")
+    .update(updateFields)
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data as CraneRow;
+}
+
+export async function deleteCrane(id: string): Promise<void> {
+  const { error } = await supabase.from("cranes").delete().eq("id", id);
+  if (error) throw error;
+}
+
+export async function uploadCraneImage(
+  file: File,
+  craneId: string,
+  categoryId: string
+): Promise<string> {
+  // Create a clean filename: categoryId-craneId.extension
+  const fileExt = file.name.split(".").pop()?.toLowerCase() || "jpg";
+  const fileName = `${craneId}.${fileExt}`;
+  const filePath = `${categoryId}/${fileName}`;
+
+  // Create a new File object with the renamed filename
+  const renamedFile = new File([file], fileName, {
+    type: file.type,
+    lastModified: file.lastModified,
+  });
+
+  // First, try to remove any existing file at this path
+  try {
+    await supabase.storage.from("cranes").remove([filePath]);
+  } catch (e) {
+    // Ignore errors if file doesn't exist
+  }
+
+  // Upload to Supabase Storage
+  const { error: uploadError } = await supabase.storage
+    .from("cranes")
+    .upload(filePath, renamedFile, {
+      cacheControl: "3600",
+      upsert: true, // Overwrite if exists
+    });
+
+  if (uploadError) throw uploadError;
+
+  // Return the public URL
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from("cranes").getPublicUrl(filePath);
+
+  return publicUrl;
+}
+
+export async function deleteCraneImage(imageUrl: string): Promise<void> {
+  // Extract the path from the full URL
+  // URL format: https://cgbanfottrxxbyoeuegk.supabase.co/storage/v1/object/public/cranes/atc/atc-id.jpg
+  const urlParts = imageUrl.split("/cranes/");
+  if (urlParts.length < 2) return;
+
+  const filePath = urlParts[1];
+
+  const { error } = await supabase.storage.from("cranes").remove([filePath]);
+
+  if (error) throw error;
+}

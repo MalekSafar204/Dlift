@@ -1,8 +1,7 @@
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
 
-// NOTE: This global admin layout has been neutralized (no auth) to stop redirect loops.
-// Actual auth protection now lives in `app/admin/quotes/layout.tsx` for the protected area only.
-
+// Root admin layout: keep neutral to avoid login redirect loops.
+// Each protected section (quotes, cranes) enforces auth in its own layout.
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }

@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { useState, useRef } from "react";
+import { createCrane, uploadCraneImage, updateCrane } from "@/lib/services";
 import type { CraneRow } from "@/constants/types";
+import Image from "next/image";
 
 interface AddCraneModalProps {
   onClose: () => void;
@@ -15,7 +16,10 @@ export default function AddCraneModal({
   onError,
 }: AddCraneModalProps) {
   const [formData, setFormData] = useState<Partial<CraneRow>>({});
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Categories
   const categories = [
@@ -31,18 +35,63 @@ export default function AddCraneModal({
     setFormData((prev) => ({ ...prev, [field]: value }));
   }
 
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      onError("Please select a valid image file");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      onError("Image must be less than 5MB");
+      return;
+    }
+
+    setImageFile(file);
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    if (!formData.category_id) {
+      onError("Please select a category");
+      return;
+    }
+
     setSaving(true);
 
-    const { error } = await supabase.from("cranes").insert([formData]);
+    try {
+      // Create the crane first to get the ID
+      const newCrane = await createCrane(formData);
 
-    setSaving(false);
+      // Upload image if provided
+      if (imageFile) {
+        const imageUrl = await uploadCraneImage(
+          imageFile,
+          newCrane.id,
+          formData.category_id
+        );
 
-    if (error) {
-      onError(error.message || "Failed to add crane");
-    } else {
+        // Update crane with image URL
+        await updateCrane(newCrane.id, { image_url: imageUrl });
+      }
+
       onSuccess("Crane added successfully!");
+    } catch (error: any) {
+      onError(error.message || "Failed to add crane");
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -163,18 +212,30 @@ export default function AddCraneModal({
             </div>
           </div>
 
-          {/* Image URL */}
+          {/* Image Upload */}
           <div>
             <label className="block text-base font-medium text-[#172A4F] mb-2">
-              Image URL
+              Crane Image
             </label>
-            <input
-              type="text"
-              placeholder="e.g., /atc/LTM-1100.jpg"
-              value={formData.image_url || ""}
-              onChange={(e) => handleChange("image_url", e.target.value)}
-              className="w-full border border-[#E2E1E1] rounded-lg px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#D7953F]/50"
-            />
+            <div className="space-y-3">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="w-full border border-[#E2E1E1] rounded-lg px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#D7953F]/50"
+              />
+              {imagePreview && (
+                <div className="relative w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
+                  <Image
+                    src={imagePreview}
+                    alt="Preview"
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Description */}

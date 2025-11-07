@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { deleteCrane } from "@/lib/services";
 import type { CraneRow } from "@/constants/types";
 import Image from "next/image";
 import EditCraneModal from "./EditCraneModal";
@@ -64,12 +65,11 @@ export default function CranesDashboard({
   async function handleDelete(crane: CraneRow) {
     if (!confirm(`Delete ${crane.name}? This action cannot be undone.`)) return;
 
-    const { error } = await supabase.from("cranes").delete().eq("id", crane.id);
-
-    if (error) {
-      flash("error", error.message || "Failed to delete crane");
-    } else {
+    try {
+      await deleteCrane(crane.id);
       flash("success", "Crane deleted successfully");
+    } catch (error: any) {
+      flash("error", error.message || "Failed to delete crane");
     }
   }
 

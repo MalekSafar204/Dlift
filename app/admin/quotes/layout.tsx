@@ -1,15 +1,15 @@
 import { ReactNode } from "react";
-import { requireAdminSession } from "@/lib/adminAuth";
+import { requireAuth } from "@/lib/supabaseAuth";
 import { redirect } from "next/navigation";
 import AdminNavbar from "@/components/AdminNavbar";
 
-export default async function QuotesProtectedLayout({
+export default async function QuotesLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  const sess = await requireAdminSession();
-  if (!sess) redirect("/admin/login");
+  const user = await requireAuth();
+  if (!user) redirect("/admin/login");
   return (
     <div className="min-h-screen flex flex-col bg-[#EDEDED] text-[#5F6678]">
       <AdminNavbar />

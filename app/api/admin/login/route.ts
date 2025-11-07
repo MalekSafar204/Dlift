@@ -1,15 +1,37 @@
-import { NextResponse } from 'next/server';
-import { setAdminCookie } from '@/lib/adminAuth';
+import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
-export const runtime = 'nodejs';
+export const runtime = "nodejs";
 
 export async function POST(req: Request) {
-  const { user, pass } = await req.json().catch(() => ({}));
-  console.log('Login attempt for user:', user, pass);
-  
-  if (user !== "admin" || pass !== "admin123") {
-    return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+  try {
+    const { accessToken, refreshToken } = await req.json();
+
+    if (!accessToken || !refreshToken) {
+      return NextResponse.json({ error: "Missing tokens" }, { status: 400 });
+    }
+
+    const cookieStore = await cookies();
+
+    // Store tokens in httpOnly cookies
+    cookieStore.set("sb-access-token", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 8, // 8 hours
+      path: "/",
+    });
+
+    cookieStore.set("sb-refresh-token", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: "/",
+    });
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    return NextResponse.json({ error: "Login failed" }, { status: 500 });
   }
-  await setAdminCookie(user);
-  return NextResponse.json({ ok: true });
 }

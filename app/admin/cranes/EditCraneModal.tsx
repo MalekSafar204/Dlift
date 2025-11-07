@@ -1,7 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { useState, useRef } from "react";
+import { updateCrane, uploadCraneImage } from "@/lib/services";
 import type { CraneRow } from "@/constants/types";
+import Image from "next/image";
 
 interface EditCraneModalProps {
   crane: CraneRow;
@@ -17,7 +18,12 @@ export default function EditCraneModal({
   onError,
 }: EditCraneModalProps) {
   const [formData, setFormData] = useState<Partial<CraneRow>>({ ...crane });
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    crane.image_url || null
+  );
   const [saving, setSaving] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Categories
   const categories = [
@@ -33,21 +39,83 @@ export default function EditCraneModal({
     setFormData((prev) => ({ ...prev, [field]: value }));
   }
 
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      onError("Please select a valid image file");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      onError("Image must be less than 5MB");
+      return;
+    }
+
+    setImageFile(file);
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    if (!formData.category_id) {
+      onError("Please select a category");
+      return;
+    }
+
     setSaving(true);
 
-    const { error } = await supabase
-      .from("cranes")
-      .update(formData)
-      .eq("id", crane.id);
+    try {
+      // Find only the changed fields (excluding id)
+      const changes: Partial<CraneRow> = {};
 
-    setSaving(false);
+      (Object.keys(formData) as Array<keyof CraneRow>).forEach((key) => {
+        // Skip id field - it should never be updated
+        if (key === "id") return;
 
-    if (error) {
-      onError(error.message || "Failed to update crane");
-    } else {
+        if (formData[key] !== crane[key]) {
+          changes[key] = formData[key] as any;
+        }
+      });
+
+      // Upload new image if provided
+      if (imageFile) {
+        const imageUrl = await uploadCraneImage(
+          imageFile,
+          crane.id,
+          formData.category_id
+        );
+        changes.image_url = imageUrl;
+      }
+
+      // Only update if there are changes
+      if (Object.keys(changes).length === 0) {
+        onError("No changes to save");
+        setSaving(false);
+        return;
+      }
+
+      console.log("Updating crane with changes:", changes);
+
+      // Update crane with only changed fields
+      await updateCrane(crane.id, changes);
+
       onSuccess("Crane updated successfully!");
+    } catch (error: any) {
+      console.error("Edit crane error:", error);
+      onError(error.message || "Failed to update crane");
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -168,18 +236,35 @@ export default function EditCraneModal({
             </div>
           </div>
 
-          {/* Image URL */}
+          {/* Image Upload */}
           <div>
             <label className="block text-base font-medium text-[#172A4F] mb-2">
-              Image URL
+              Crane Image
             </label>
-            <input
-              type="text"
-              placeholder="e.g., /atc/LTM-1100.jpg"
-              value={formData.image_url || ""}
-              onChange={(e) => handleChange("image_url", e.target.value)}
-              className="w-full border border-[#E2E1E1] rounded-lg px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#D7953F]/50"
-            />
+            <div className="space-y-3">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="w-full border border-[#E2E1E1] rounded-lg px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#D7953F]/50"
+              />
+              {imagePreview && (
+                <div className="relative w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
+                  <Image
+                    src={imagePreview}
+                    alt="Preview"
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              )}
+              {crane.image_url && !imageFile && (
+                <p className="text-sm text-[#5F6678]">
+                  Current image will be kept unless you upload a new one
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Description */}
