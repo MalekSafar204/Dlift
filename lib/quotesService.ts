@@ -30,18 +30,24 @@ export async function sendQuoteReply(
 
 // Server-side direct Supabase helpers. Use dynamic import to avoid bundling server-only code on the client.
 export async function listQuotes(limit = 200): Promise<QuoteRequestRow[]> {
+  const { createAuthenticatedSupabaseClient } = await import("./supabaseAuth");
+  const supabase = await createAuthenticatedSupabaseClient();
+  
   const { data, error } = await supabase
     .from("quote_requests")
     .select("*")
     .order("created_at", { ascending: false })
     .limit(limit);
   if (error) throw new Error(error.message);
-  return data || [];
+  return data ?? [];
 }
 
 export async function getQuoteById(
   id: string
 ): Promise<QuoteRequestRow | null> {
+  const { createAuthenticatedSupabaseClient } = await import("./supabaseAuth");
+  const supabase = await createAuthenticatedSupabaseClient();
+  
   const { data, error } = await supabase
     .from("quote_requests")
     .select("*")
@@ -52,6 +58,9 @@ export async function getQuoteById(
 }
 
 export async function deleteQuote(id: string): Promise<{ ok: boolean }> {
+  const { createAuthenticatedSupabaseClient } = await import("./supabaseAuth");
+  const supabase = await createAuthenticatedSupabaseClient();
+  
   const { error } = await supabase.from("quote_requests").delete().eq("id", id);
   if (error) throw new Error(error.message);
   return { ok: true };
@@ -74,6 +83,9 @@ export async function createQuoteServer(input: {
   notes: string | null;
   status?: QuoteStatus;
 }): Promise<QuoteRequestRow> {
+  const { createAuthenticatedSupabaseClient } = await import("./supabaseAuth");
+  const supabase = await createAuthenticatedSupabaseClient();
+  
   const { data, error } = await supabase
     .from("quote_requests")
     .insert({ ...input, status: input.status ?? "new" })
@@ -85,6 +97,9 @@ export async function createQuoteServer(input: {
 
 // Server-side: update status
 export async function updateQuoteStatusServer(id: string, status: QuoteStatus) {
+  const { createAuthenticatedSupabaseClient } = await import("./supabaseAuth");
+  const supabase = await createAuthenticatedSupabaseClient();
+  
   const { data, error } = await supabase
     .from("quote_requests")
     .update({ status })
@@ -101,6 +116,9 @@ export async function getQuoteHeaderForReply(
   QuoteRequestRow,
   "id" | "email" | "contact_name" | "company"
 > | null> {
+  const { createAuthenticatedSupabaseClient } = await import("./supabaseAuth");
+  const supabase = await createAuthenticatedSupabaseClient();
+  
   const { data, error } = await supabase
     .from("quote_requests")
     .select("id,email,contact_name,company")

@@ -9,6 +9,6 @@ export async function POST() {
   // Clear auth cookies
   cookieStore.delete("sb-access-token");
   cookieStore.delete("sb-refresh-token");
-
-  return NextResponse.json({ ok: true });
+  window.location.href = "/admin/login";
+  // return NextResponse.json({ ok: true });
 }
