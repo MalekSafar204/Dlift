@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { sendQuoteReply, updateQuoteStatus } from "@/lib/quotesService";
+import { updateQuoteStatusAction, sendQuoteReplyAction } from "./actions";
 import type { QuoteRequestRow, QuoteStatus } from "@/constants/types";
 import DetailsModal from "./DetailsModal";
 import ReplyModal from "./ReplyModal";
@@ -62,14 +62,18 @@ export default function QuotesDashboard({
     const prev = quotes;
     setQuotes((q) => q.map((r) => (r.id === id ? { ...r, status } : r)));
     console.log("STATUS CHANGIN TO: ---->", status);
-    updateQuoteStatus(id, status)
-      .then(() => flash("success", "Status updated"))
+    updateQuoteStatusAction(id, status)
+      .then((result) => {
+        if (result.ok) {
+          flash("success", "Status updated");
+        } else {
+          setQuotes(prev);
+          flash("error", result.error || "Failed to update status");
+        }
+      })
       .catch((e: any) => {
         setQuotes(prev);
-        flash(
-          "error",
-          e?.response?.data?.error || e?.message || "Failed to update status"
-        );
+        flash("error", e?.message || "Failed to update status");
       });
   }
 
@@ -80,16 +84,21 @@ export default function QuotesDashboard({
     const subject = fd.get("subject");
     const message = fd.get("message");
     try {
-      await sendQuoteReply(selected.id, String(subject), String(message));
+      const result = await sendQuoteReplyAction(
+        selected.id,
+        String(subject),
+        String(message)
+      );
       setSending(false);
-      setShowReplyModal(false);
-      flash("success", "Reply sent");
+      if (result.ok) {
+        setShowReplyModal(false);
+        flash("success", "Reply sent");
+      } else {
+        flash("error", result.error || "Failed to send");
+      }
     } catch (e: any) {
       setSending(false);
-      flash(
-        "error",
-        e?.response?.data?.error || e?.message || "Failed to send"
-      );
+      flash("error", e?.message || "Failed to send");
     }
   }
 
