@@ -1,8 +1,7 @@
 "use client";
 import React, { useState, useMemo, useEffect } from "react";
-import { craneCategories } from "@/constants/data"; 
 import Image from "next/image";
-import { Crane, CraneCategory, QuoteFormState } from "@/constants/types";
+import { CraneCategory, CraneRow, QuoteFormState } from "@/constants/types";
 import { useSearchParams } from "next/navigation";
 
 const initialState: QuoteFormState = {
@@ -18,7 +17,7 @@ const initialState: QuoteFormState = {
   endDate: "",
 };
 
-function CustomCraneRequest() {
+function CustomCraneRequest({ craneCategories }: { craneCategories: CraneCategory[] }) {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
     categoryId: "",
@@ -332,7 +331,11 @@ function CustomCraneRequest() {
   );
 }
 
-export default function QuoteForm() {
+interface QuoteFormProps {
+  craneCategories: CraneCategory[];
+}
+
+export default function QuoteForm({ craneCategories }: QuoteFormProps) {
   const [form, setForm] = useState<QuoteFormState>(initialState);
   const searchParams = useSearchParams();
   const modelId = searchParams.get("model");
@@ -361,7 +364,7 @@ export default function QuoteForm() {
     [form.categoryId]
   );
 
-  const selectedCrane: Crane | undefined = useMemo(
+  const selectedCrane: CraneRow | undefined = useMemo(
     () => selectedCategory?.cranes.find((cr) => cr.name === form.modelName),
     [selectedCategory, form.modelName]
   );
@@ -416,7 +419,7 @@ export default function QuoteForm() {
           location: form.location,
           startDate: form.startDate,
           endDate: form.endDate,
-          capacityNeeded: selectedCrane?.capacity || 'unspecified',
+          capacityNeeded: selectedCrane?.capacity_text || 'unspecified',
         }),
       });
       const json = await res.json();
@@ -486,7 +489,7 @@ export default function QuoteForm() {
                 </option>
                 {cranesForCategory.map((crane) => (
                   <option key={crane.name} value={crane.name}>
-                    {crane.name} ({crane.capacity})
+                    {crane.name} ({crane.capacity_text})
                   </option>
                 ))}
               </select>
@@ -497,7 +500,7 @@ export default function QuoteForm() {
             <div className="bg-white border rounded-lg shadow-sm p-6 md:p-8 flex flex-col md:flex-row gap-8">
               <div className="md:w-1/3 relative aspect-video bg-gray-100 rounded overflow-hidden">
                 <Image
-                  src={selectedCrane.image}
+                  src={selectedCrane.image_url ?? ""}
                   alt={selectedCrane.name}
                   fill
                   sizes="(max-width:768px) 100vw, 33vw"
@@ -510,11 +513,11 @@ export default function QuoteForm() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
                   <div className="bg-gray-100 rounded p-3">
                     <div className="font-semibold">Capacity</div>
-                    <div>{selectedCrane.capacity}</div>
+                    <div>{selectedCrane.capacity_text}</div>
                   </div>
                   <div className="bg-gray-100 rounded p-3">
                     <div className="font-semibold">Year</div>
-                    <div>{selectedCrane.year}</div>
+                    <div>{selectedCrane.year_text}</div>
                   </div>
                   <div className="bg-gray-100 rounded p-3">
                     <div className="font-semibold">Manufacturer</div>
@@ -655,7 +658,7 @@ export default function QuoteForm() {
           </div>
         </form>
         {/* Custom Crane Request Section */}
-        <CustomCraneRequest />
+        <CustomCraneRequest craneCategories={craneCategories} />
       </div>
     </section>
   );
